@@ -1,0 +1,8 @@
+default_cancel_message: '&cКоманда не найдена.'
+
+excluded_commands:
+- cmd: //sphere
+  cancel_message: 'sieg heil'
+  
+# anticmd.bypass
+# anticmd.reload

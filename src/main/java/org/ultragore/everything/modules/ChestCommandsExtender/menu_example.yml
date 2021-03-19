@@ -1,0 +1,89 @@
+######################
+#+                  +#
+#   MENU SETTINGS    #
+#+                  +#
+######################
+
+menu-settings:
+
+   # name - appears as the title - REQUIRED
+   name: "menu name"
+   
+   # rows - the number of rows of the chest - REQUIRED
+   rows: 6
+   
+   # command - OPTIONAL (you can remove this or set it to '')
+   commands: ''
+   
+   
+   
+   
+######################
+#+                  +#
+#       ITEMS        #
+#+                  +#
+######################
+
+
+
+## Vanilla icon
+#
+##Optional:
+# float        PRICE
+# int          AMOUNT
+# List<String> ACTIONS
+# boolean      KEEP-OPEN
+# String       NAME
+# List<String> LORE
+# List<String> ENCHANTMENTS
+#
+##Required:
+# Material     MATERIAL
+# int          POSITION-X, POSITION-Y
+#
+
+
+## IconRepeater
+#
+##Optional:
+# float        PRICE
+# int          AMOUNT
+# List<String> ACTIONS
+# boolean      KEEP-OPEN
+# String       NAME
+# List<String> LORE
+# List<String> ENCHANTMENTS
+#
+##Required:
+# String RANGE-X "fromX-toX"
+# String RANGE-Y "fromY-toY"
+
+
+## IconsGroup
+#
+##Optional:
+# float        PRICE
+# int          AMOUNT
+# List<String> ACTIONS
+# boolean      KEEP-OPEN
+# String       NAME
+# List<String> LORE
+# List<String> ENCHANTMENTS
+# Direction    DIRECTION [default HORIZONTAL, VERTICAL]
+# byte         INVENTORY-SIZE  1-6
+# byte         INVENTORY-TOP-LINE-Y  1-6
+# 
+##Required:
+# List<String> GROUP  ["{arg}", "CHISELED_{arg}, "CUT_{arg}", "{arg}_SLAB"]
+# String       ARGUMENT
+# int          POSITION-X, POSITION-Y
+#
+# Available placeholders for ACTIONS:
+# {MATERIAL}, {AMOUNT}
+#
+# Available placeholder for LORE:
+# {PRICE}, {AMOUNT}
+#
+# GROUP Item format is "MATERIAL_PART_{arg}$price_factor$amount"
+# For instance "{arg}_STAIRS$0.4$6"
+#              "{arg}_PLANKS$1$8"

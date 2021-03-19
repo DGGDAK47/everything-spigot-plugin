@@ -1,0 +1,17 @@
+name: Everything
+main: org.ultragore.everything.Everything
+version: 0.1
+depend: [WorldGuard, WorldEdit, ChestCommands]
+api-version: 1.16
+commands:
+   opregions:
+      description: Reloads config
+      usage: /opregions reload
+   everything:
+      description: Main Everything plugin command
+      usage: /everything help
+   cce:
+      description: Loads module menus and dumps them
+      usage: /cce refresh
+   anticmd:
+      usage: /anticmd reload
