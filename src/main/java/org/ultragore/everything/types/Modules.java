@@ -3,7 +3,8 @@ package org.ultragore.everything.types;
 public enum Modules {
 	OP_REGIONS ("OPRegions", "opregions", org.ultragore.everything.modules.OPRegions.OPRegions.class),
 	CHEST_COMMANDS_EXTENDER ("ChestCommandsExtender", "cce", org.ultragore.everything.modules.ChestCommandsExtender.ChestCommandsExtender.class),
-	ANTI_CMD ("AntiCMD", "anticmd", org.ultragore.everything.modules.AntiCMD.AntiCMD.class);
+	ANTI_CMD ("AntiCMD", "anticmd", org.ultragore.everything.modules.AntiCMD.AntiCMD.class),
+	CASINO ("Casino", "casino", org.ultragore.everything.modules.Casino.Casino.class);
 	
 	private String moduleName;
 	private String moduleCommand;

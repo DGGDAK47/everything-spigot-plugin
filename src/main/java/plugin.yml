@@ -1,7 +1,7 @@
 name: Everything
 main: org.ultragore.everything.Everything
 version: 0.1
-depend: [WorldGuard, WorldEdit, ChestCommands]
+depend: [WorldGuard, WorldEdit, ChestCommands, AuthMe, Vault]
 api-version: 1.16
 commands:
    opregions:
@@ -15,3 +15,5 @@ commands:
       usage: /cce refresh
    anticmd:
       usage: /anticmd reload
+   casino:
+      usage: /casino reload

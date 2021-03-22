@@ -1,0 +1,27 @@
+scroll_sound: BLOCK_STONE_BUTTON_CLICK_ON
+line_stop_sound: BLOCK_COMPARATOR_CLICK
+lose_sound: ITEM_BUCKET_EMPTY
+reward_sound: ENTITY_EXPERIENCE_ORB_PICKUP
+
+messages:
+   machine_busy: "..."
+   roll_start: "..{fee}"
+   reward_message: "... {reward}"
+   lose_message: "..."
+   not_enough_cash: "...{fee}"
+
+machines:
+   mach1:
+      win_line: 2
+      roll_price: 123.45
+      lines_height: 3
+      blocks_in_lines:
+      - "BEACON:123"
+      - "PACKED_ICE:NONE"
+      - "SANDSTONE:15.5"
+      lines_top_block_locations:
+      - "world -90 75 -208"
+      - "world -90 75 -210"
+      - "world -90 75 -212"
+      lever_location: "world -88 73 -210"
+ 

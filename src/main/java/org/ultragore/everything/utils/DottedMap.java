@@ -58,8 +58,8 @@ public class DottedMap {
 		return (Boolean) getObject(path);
 	}
 	
-	public Map<Object, Object> getMap(String path) {
-		return (Map<Object, Object>) getObject(path);
+	public Map getMap(String path) {
+		return (Map) getObject(path);
 	}
 	
 	public List<Object> getList(String path) {
