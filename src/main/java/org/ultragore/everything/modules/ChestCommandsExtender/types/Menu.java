@@ -22,7 +22,7 @@ public class Menu {
 		
 		Set<String> keys = map.keySet();
 		Map<String, Object> item;
-		for(String key: keys) {
+		for(Object key: keys) {
 			if(key.equals("menu-settings")) {
 				this.menuSettings = (Map<String, Object>) map.get("menu-settings");
 				continue;
