@@ -26,6 +26,17 @@ public class MenuManager {
 		this.yaml = new Yaml();
 	}
 	
+	
+	public Menu getMenu(String menuFileName) {
+		for(Menu m: loadedMenus) {
+			if(m.getMenuFileName().equals(menuFileName)) {
+				return m;
+			}
+		}
+		
+		return null;
+	}
+	
 	public void loadMenus() {
 		module.printLog("Loading menus..");
 		File menusDir = new File(module.MENUS_DIR);
@@ -72,6 +83,29 @@ public class MenuManager {
 		}
 		
 		module.printLog("All menus has been dumped!");
+	}
+	
+	public void dumpMenu(String menuFileName) throws IOException {
+		module.printLog("Dumpting menu: " + menuFileName);
+		
+		Menu menu = getMenu(menuFileName);
+		if(menu != null) {
+			File file = new File(ChestCommandsExtender.DUMP_DIR + "/" + menu.getMenuFileName());
+			if(!file.exists()) {
+				file.createNewFile();
+			} else {
+				file.delete();
+				file.createNewFile();
+			}
+			FileWriter writer = new FileWriter(file);
+			yaml.dump(menu.createNativeMenuMap(), writer);
+		} else {
+			module.printLog("Menu " + menuFileName + " not found!");
+			return;
+		}
+		
+		
+		module.printLog("Menu dumped!");
 	}
 	
 	public void reloadChestCommandsPlugin() {

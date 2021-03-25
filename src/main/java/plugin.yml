@@ -12,7 +12,7 @@ commands:
       usage: /everything help
    cce:
       description: Loads module menus and dumps them
-      usage: /cce refresh
+      usage: /cce refresh [menu_file_name]
    anticmd:
       usage: /anticmd reload
    casino:

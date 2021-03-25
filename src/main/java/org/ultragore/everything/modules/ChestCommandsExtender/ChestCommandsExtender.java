@@ -77,7 +77,11 @@ public class ChestCommandsExtender extends Module implements CommandExecutor{
 				
 				menuManager.loadMenus();
 				try {
-					menuManager.dumpMenus();
+					if(args.length == 2) {
+						menuManager.dumpMenu(args[1]);
+					} else {
+						menuManager.dumpMenus();						
+					}
 				} catch (IOException e) {
 					e.printStackTrace();
 					return true;
