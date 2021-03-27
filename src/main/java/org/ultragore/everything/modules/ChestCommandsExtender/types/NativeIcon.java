@@ -1,5 +1,6 @@
 package org.ultragore.everything.modules.ChestCommandsExtender.types;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -92,7 +93,16 @@ public class NativeIcon {
 		}
 		
 		if(lore != null) {
-			toReturn.put("LORE", lore);
+			if(price != null) {
+				List<String> newLore = new ArrayList();
+				for(String line: lore) {
+					newLore.add(line.replaceAll("\\{PRICE\\}", price.toString()));
+				}
+				
+				toReturn.put("LORE", newLore);
+			} else {
+				toReturn.put("LORE", lore);
+			}
 		}
 		
 		if(enchantments != null) {

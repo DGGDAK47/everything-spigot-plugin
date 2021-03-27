@@ -41,6 +41,8 @@ menu-settings:
 # Material     MATERIAL
 # int          POSITION-X, POSITION-Y
 #
+## Available placeholders for LORE:
+#  {PRICE}
 
 
 ## IconRepeater
