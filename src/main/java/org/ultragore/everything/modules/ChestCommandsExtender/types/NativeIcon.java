@@ -7,7 +7,7 @@ import java.util.Map;
 
 public class NativeIcon {
 	
-	public Float price = null;
+	public Double price = null;
 	public Integer amount = null;
 	public List<String> actions = null;
 	public Boolean keepOpen = null;
@@ -25,10 +25,10 @@ public class NativeIcon {
 		
 		if(icon.containsKey("PRICE")) {
 			Object ob = icon.get("PRICE");
-			if (ob instanceof Float) {
-				this.price = (Float) icon.get("PRICE");
+			if (ob instanceof Double) {
+				this.price = (Double) icon.get("PRICE");
 			} else {
-				this.price = Float.valueOf((Integer) icon.get("PRICE"));
+				this.price = ((Integer) icon.get("PRICE")).doubleValue();
 			}
 		}
 		
