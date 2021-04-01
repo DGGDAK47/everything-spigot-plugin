@@ -63,7 +63,11 @@ public class WECommandManager implements Listener {
 		COPY("//copy", null, "copyCommand", "worldedit.clipboard.copy"),
 		CUT("//cut", null, "cutCommand", "worldedit.clipboard.cut"),
 		PASTE("//paste", null, "pasteCommand", "worldedit.clipboard.paste"),
-		CLEARCLIPBOARD("/clearclipboard", null, "clearClipboardCommand", "worldedit.clipboard.clear");
+		CLEARCLIPBOARD("/clearclipboard", null, "clearClipboardCommand", "worldedit.clipboard.clear"),
+		
+		UNDO("//undo", Arrays.asList("/undo"), "undoCommand", "worldedit.history.undo.self"),
+		REDO("//redo", Arrays.asList("/redo"), "redoCommand", "worldedit.history.redo.self"),
+		CLEARHISTORY("//clearhistory", Arrays.asList("/clearhistory"), "clearhistoryCommand", "worldedit.history.clear");
 		
 		private String command;
 		private List<String> alias;
@@ -96,7 +100,7 @@ public class WECommandManager implements Listener {
 		}
 	};
 	
-	private static final String MAKE_RESTRICTIONS_CHECKS_PERM = "everything.weextender.restrict";
+	private static final String MAKE_RESTRICTIONS_CHECKS_PERM = "everything.wee.restrict";
 	
 	private RestrictionManager restrictionManager;
 	private ClipboardManager clipboardManager;
@@ -165,15 +169,19 @@ public class WECommandManager implements Listener {
 	
 	@EventHandler
 	public void onCommandPreprocess(PlayerCommandPreprocessEvent event) {
+		String message = event.getMessage().toLowerCase();
+		if(!(message.startsWith("/undo") ||
+		     message.startsWith("/redo") ||
+		     message.startsWith("/clearhistory") ||
+		     message.startsWith("/clearclipboard")) && !message.startsWith("//")) {
+			return;
+		}
 		
-		if(!event.getMessage().toLowerCase().startsWith("/clearclipboard") &&
-		   !event.getMessage().startsWith("//") ||
-		   event.getMessage().toLowerCase().equals("//wand") ||
-		   event.getPlayer() == null ||
-		   !event.getPlayer().hasPermission(MAKE_RESTRICTIONS_CHECKS_PERM)){ return; }
+		if(event.getPlayer() == null || !event.getPlayer().hasPermission(MAKE_RESTRICTIONS_CHECKS_PERM)) {
+			return;
+		}
 		
-		
-		String command = event.getMessage().split(" ")[0].toLowerCase();
+		String command = message.split(" ")[0];
 		WECommandsData commandData = WECommandsData.getCommandData(command);
 		if(commandData == null) {
 			return;
@@ -563,5 +571,41 @@ public class WECommandManager implements Listener {
 		}
 		
 		clipboardManager.removeClipboard(executor);
+	}
+	
+	
+	
+	
+	
+	public void undoCommand(Player executor, String message) {
+		// //undo [times] [player]
+		// /undo [times] [player]
+		// times player arguments are not allowed
+		WECommand cmd = new WECommand(message, null);
+		
+		if(cmd.allArgumentsSummary() > 0) {
+			throw new NotAllowedArgumentException();
+		}
+	}
+	
+	public void redoCommand(Player executor, String message) {
+		// //redo [times] [player]
+		// /redo [times] [player]
+		// times player arguments are not allowed
+		WECommand cmd = new WECommand(message, null);
+		
+		if(cmd.allArgumentsSummary() > 0) {
+			throw new NotAllowedArgumentException();
+		}
+	}
+	
+	public void clearhistoryCommand(Player executor, String message) {
+		// //clearhistory
+		// /clearhistory
+		WECommand cmd = new WECommand(message, null);
+		
+		if(cmd.allArgumentsSummary() > 0) {
+			throw new TooManyArgumentsException();
+		}
 	}
 }
