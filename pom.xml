@@ -34,9 +34,19 @@
         <id>jitpack.io</id>
         <url>https://jitpack.io</url>
     </repository>
+    <repository>
+        <id>luckperms.net</id>
+        <url>https://central.sonatype.org</url>
+    </repository>
   </repositories>
 
   <dependencies>
+  	<dependency>
+        <groupId>net.luckperms</groupId>
+        <artifactId>api</artifactId>
+        <version>5.3</version>
+        <scope>provided</scope>
+    </dependency>
   	<dependency>
         <groupId>com.github.MilkBowl</groupId>
         <artifactId>VaultAPI</artifactId>

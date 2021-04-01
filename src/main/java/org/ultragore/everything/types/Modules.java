@@ -4,7 +4,8 @@ public enum Modules {
 	OP_REGIONS ("OPRegions", "opregions", org.ultragore.everything.modules.OPRegions.OPRegions.class),
 	CHEST_COMMANDS_EXTENDER ("ChestCommandsExtender", "cce", org.ultragore.everything.modules.ChestCommandsExtender.ChestCommandsExtender.class),
 	ANTI_CMD ("AntiCMD", "anticmd", org.ultragore.everything.modules.AntiCMD.AntiCMD.class),
-	CASINO ("Casino", "casino", org.ultragore.everything.modules.Casino.Casino.class);
+	CASINO ("Casino", "casino", org.ultragore.everything.modules.Casino.Casino.class),
+	WE_EXTENDER ("WEExtender", "wee", org.ultragore.everything.modules.WorldEditExtender.WorldEditExtender.class);
 	
 	private String moduleName;
 	private String moduleCommand;

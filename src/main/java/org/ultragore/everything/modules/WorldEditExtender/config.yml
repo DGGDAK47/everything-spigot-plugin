@@ -1,0 +1,17 @@
+group_restrictions:
+   admin:
+      blocks_change_limit: 500
+      issue_cooldown: 20
+      edit_others_regions: false
+      edit_world: true
+   moder:
+      blocks_change_limit: 100
+      issue_cooldown: 20
+      edit_others_regions: false
+      edit_world: false
+
+default_restrictions:
+   blocks_change_limit: 50
+   issue_cooldown: 20
+   edit_others_regions: false
+   edit_world: false

@@ -3,6 +3,7 @@ package org.ultragore.everything.utils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.util.BoundingBox;
 
 public class WorldUtils {
 	
@@ -30,5 +31,29 @@ public class WorldUtils {
 		}
 		
 		return new Location(world, x, y, z, yaw, pitch);
+	}
+	
+	
+	
+	public static BoundingBox boxAtLocationCenter(Location loc, double width, double height, double depth) {
+		return new BoundingBox(
+			loc.getX() - width / 2,
+			loc.getY() - height / 2,
+			loc.getZ() - depth / 2,
+			loc.getX() + width / 2,
+			loc.getY() + height / 2,
+			loc.getZ() + depth / 2
+		);
+	}
+	
+	public static BoundingBox boxOverLocation(Location loc, double width, double height, double depth) {
+		return new BoundingBox(
+			loc.getX() - width / 2,
+			loc.getY(),
+			loc.getZ() - depth / 2,
+			loc.getX() + width / 2,
+			loc.getY() + height,
+			loc.getZ() + depth / 2
+		);
 	}
 }
