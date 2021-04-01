@@ -12,10 +12,6 @@ import org.ultragore.everything.modules.WorldEditExtender.types.ClipboardArea;
 public class ClipboardManager implements Listener {
 	private List<ClipboardArea> activeClipboards = new ArrayList<ClipboardArea>();
 	
-	public ClipboardManager() {
-		
-	}
-	
 	
 	public void addClipboard(ClipboardArea clipboard) {
 		if(hasClipboard(clipboard.getPlayer())) {

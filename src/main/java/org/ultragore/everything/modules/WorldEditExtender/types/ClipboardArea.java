@@ -30,12 +30,12 @@ public class ClipboardArea {
 	
 	public BoundingBox getBoxFromCoords(int x, int y, int z) {
 		return new BoundingBox(
-			x + offsetX,
-			y + offsetY,
-			z + offsetZ,
-			x + offsetX + clipboardWidth,
-			y + offsetY + clipboardHeight,
-			z + offsetZ + clipboardDepth
+			x - offsetX,
+			y - offsetY,
+			z - offsetZ,
+			x - offsetX + clipboardWidth,
+			y - offsetY + clipboardHeight,
+			z - offsetZ + clipboardDepth
 		);
 	}
 }

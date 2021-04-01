@@ -552,7 +552,6 @@ public class WECommandManager implements Listener {
 		AffectedArea pasteArea = new AffectedArea(clipboard.getBoxFromCoords(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ()), executor.getWorld());
 		
 		clipboardCommandsChecks(executor, pasteArea);
-		clipboardManager.removeClipboard(executor);
 	}
 	
 	public void clearClipboardCommand(Player executor, String message) {
@@ -562,5 +561,7 @@ public class WECommandManager implements Listener {
 		if(cmd.allArgumentsSummary() > 0) {
 			throw new TooManyArgumentsException();
 		}
+		
+		clipboardManager.removeClipboard(executor);
 	}
 }
