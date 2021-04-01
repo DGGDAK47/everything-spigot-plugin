@@ -31,6 +31,11 @@ public class WECommand {
 				if(i == 1 && sMessage[i].startsWith("-") && !parameterKeys.contains(sMessage[i].substring(1))) {
 					if(sMessage[i].length() == 1) throw new InvalidWECommandSyntaxException(i);
 					options = Arrays.asList(sMessage[i].substring(1).split(""));
+					for(String option: options) {
+						if(!Character.isLetter(option.toCharArray()[0])) {
+							throw new InvalidWECommandSyntaxException(i);
+						}
+					}
 					continue;
 				}
 				

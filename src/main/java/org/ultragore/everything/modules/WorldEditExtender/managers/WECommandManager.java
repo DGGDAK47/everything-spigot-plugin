@@ -120,7 +120,7 @@ public class WECommandManager implements Listener {
 		return worldEditPlugin.getSession(p);
 	}
 	
-	public static AffectedArea getAffectedAreaOfSelection(LocalSession ls, int areaExpansion) {
+	public static AffectedArea getAffectedAreaOfSelection(LocalSession ls, int expandX, int expandY, int expandZ) {
 		World w;
 		if(ls.getSelectionWorld() == null || ls.getSelectionWorld().getName() == null) {
 			throw new IncompleteSelectException();
@@ -137,14 +137,14 @@ public class WECommandManager implements Listener {
 		
 		BlockVector3 pos1 = cr.getPos1();
 		BlockVector3 pos2 = cr.getPos2();
-		BoundingBox selectBox = new BoundingBox(pos1.getBlockX() - areaExpansion, pos1.getBlockY() - areaExpansion, pos1.getBlockZ() - areaExpansion,
-										 pos2.getBlockX() - areaExpansion, pos2.getBlockY() - areaExpansion, pos2.getBlockZ() - areaExpansion);
-		
+		BoundingBox selectBox = new BoundingBox(pos1.getBlockX(), pos1.getBlockY(), pos1.getBlockZ(),
+										 		pos2.getBlockX(), pos2.getBlockY(), pos2.getBlockZ());
+		selectBox = selectBox.expand(expandX, expandY, expandZ);
 		return new AffectedArea(selectBox, w);
 	}
 	
 	public static ClipboardArea getClipboardAreaOfSelection(LocalSession ls, Player executor) {
-		BoundingBox selectBox = getAffectedAreaOfSelection(ls, 0).getAreaBox();
+		BoundingBox selectBox = getAffectedAreaOfSelection(ls, 0, 0, 0).getAreaBox();
 		return new ClipboardArea(executor,
 			(int) selectBox.getWidthX(),
 			(int) selectBox.getHeight(),
@@ -242,7 +242,7 @@ public class WECommandManager implements Listener {
 	
 	
 	
-	private void checkEditRestrictions(AffectedArea area, Player executor, int areaExpansion) {
+	private void checkEditRestrictions(AffectedArea area, Player executor) {
 		
 		// blocks limit check
 		int blocksChangeLimit = restrictionManager.getBlocksChangeLimit(executor);
@@ -271,13 +271,13 @@ public class WECommandManager implements Listener {
 	}
 	
 	
-	private void selectionCommandsChecks(Player executor, int selectExpansion) {
+	private void selectionCommandsChecks(Player executor, int expandX, int expandY, int expandZ) {
 		LocalSession ls = getSession(executor);
 		if(ls == null) {
 			throw new IncompleteSelectException();
 		}
-		AffectedArea area = getAffectedAreaOfSelection(ls, selectExpansion);
-		checkEditRestrictions(area, executor, selectExpansion);
+		AffectedArea area = getAffectedAreaOfSelection(ls, expandX, expandY, expandZ);
+		checkEditRestrictions(area, executor);
 	}
 	
 	public void setCommand(Player executor, String message) {
@@ -291,7 +291,7 @@ public class WECommandManager implements Listener {
 			throw new TooManyArgumentsException();
 		}
 		
-		selectionCommandsChecks(executor, 0);
+		selectionCommandsChecks(executor, 0, 0, 0);
 	}
 	
 	public void lineCommand(Player executor, String message) {
@@ -311,7 +311,7 @@ public class WECommandManager implements Listener {
 			}
 		}
 		
-		selectionCommandsChecks(executor, thickness);
+		selectionCommandsChecks(executor, thickness, thickness, thickness);
 	}
 	
 	public void replaceCommand(Player executor, String message) {
@@ -325,7 +325,7 @@ public class WECommandManager implements Listener {
 			throw new TooManyArgumentsException();
 		}
 		
-		selectionCommandsChecks(executor, 0);
+		selectionCommandsChecks(executor, 0, 1, 0);
 	}
 	
 	public void overlayCommand(Player executor, String message) {
@@ -339,7 +339,21 @@ public class WECommandManager implements Listener {
 			throw new TooManyArgumentsException();
 		}
 		
-		selectionCommandsChecks(executor, 0);
+		selectionCommandsChecks(executor, 0, 1, 0);
+	}
+	
+	public void wallsCommand(Player executor, String message) {
+		// walls <pattern>
+		WECommand cmd = new WECommand(message, null);
+		
+		int argumentsSummary = cmd.allArgumentsSummary();
+		if(argumentsSummary == 0) {
+			throw new NotEnoughArgumentsException();
+		} else if(argumentsSummary > 1) {
+			throw new TooManyArgumentsException();
+		}
+		
+		selectionCommandsChecks(executor, 0, 0, 0);
 	}
 	
 	public void facesCommand(Player executor, String message) {
@@ -353,26 +367,35 @@ public class WECommandManager implements Listener {
 			throw new TooManyArgumentsException();
 		}
 		
-		selectionCommandsChecks(executor, 0);
+		selectionCommandsChecks(executor, 0, 0, 0);
 	}
 	
 	public void forestCommand(Player executor, String message) {
 		// //forest [type] [density]
 		WECommand cmd = new WECommand(message, null);
 		
-		selectionCommandsChecks(executor, 15);
+		if(cmd.allArgumentsSummary() > 2) {
+			throw new TooManyArgumentsException();
+		}
+		
+		selectionCommandsChecks(executor, 2, 2 ,2);
 	}
 	
 	public void floraCommand(Player executor, String message) {
 		// //flora [density]
 		WECommand cmd = new WECommand(message, null);
-		selectionCommandsChecks(executor, 15);
+		
+		if(cmd.allArgumentsSummary() > 1) {
+			throw new TooManyArgumentsException();
+		}
+		
+		selectionCommandsChecks(executor, 2, 1, 2);
 	}
 	
 	
 	
 	private void generationCommandsChecks(Player executor, BoundingBox area) {
-		checkEditRestrictions(new AffectedArea(area, executor.getWorld()), executor, 0);
+		checkEditRestrictions(new AffectedArea(area, executor.getWorld()), executor);
 	}
 	
 	public void cylCommand(Player executor, String message) {
@@ -392,17 +415,17 @@ public class WECommandManager implements Listener {
 		}
 		
 		int radius;
-		int height = 1;
+		int height = 0;
 		try {
 			radius = Integer.parseInt(cmd.getArgument(1));
-			if(argumentsAmount == 2) {
-				height = Integer.parseInt(cmd.getArgument(2));
+			if(argumentsAmount == 3) {
+				height = Integer.parseInt(cmd.getArgument(2)) - 1;
 			}
 		} catch(NumberFormatException e) {
 			throw new InvalidArgumentException();
 		}
 		
-		generationCommandsChecks(executor, WorldUtils.boxOverLocation(executor.getLocation(), radius * 2 + 1, height, radius * 2 + 1));
+		generationCommandsChecks(executor, WorldUtils.boxOverLocationCenter(executor.getLocation(), radius * 2, height, radius * 2));
 	}
 	
 	public void sphereCommand(Player executor, String message) {
@@ -429,7 +452,14 @@ public class WECommandManager implements Listener {
 			throw new InvalidArgumentException();
 		}
 		
-		generationCommandsChecks(executor, WorldUtils.boxAtLocationCenter(executor.getLocation(), radius * 2 + 1, radius * 2 + 1, radius * 2 + 1));
+		BoundingBox box;
+		if(cmd.hasOption("r")) {
+			box = WorldUtils.boxAtLocationCenter(executor.getLocation().add(0, radius, 0), radius * 2, radius * 2, radius * 2);
+		} else {
+			box = WorldUtils.boxAtLocationCenter(executor.getLocation(), radius * 2, radius * 2, radius * 2);
+		}
+		
+		generationCommandsChecks(executor, box);
 	}
 	
 	public void pyramidCommand(Player executor, String message) {
@@ -443,7 +473,7 @@ public class WECommandManager implements Listener {
 		int argumentsAmount = cmd.getArgumentsAmount();
 		if(argumentsAmount <= 1) {
 			throw new NotEnoughArgumentsException();
-		} else if(argumentsAmount > 3) {
+		} else if(argumentsAmount > 2) {
 			throw new TooManyArgumentsException();
 		}
 		
@@ -454,14 +484,14 @@ public class WECommandManager implements Listener {
 			throw new InvalidArgumentException();
 		}
 		
-		generationCommandsChecks(executor, WorldUtils.boxOverLocation(executor.getLocation(), size, size, size));
+		generationCommandsChecks(executor, WorldUtils.boxOverLocationCenter(executor.getLocation(), size, size - 1, size));
 	}
 	
 	
 	
 	
 	private void clipboardCommandsChecks(Player executor, AffectedArea area) {
-		checkEditRestrictions(area, executor, 0);
+		checkEditRestrictions(area, executor);
 	}
 	
 	public void copyCommand(Player executor, String message) {
@@ -473,7 +503,7 @@ public class WECommandManager implements Listener {
 			throw new NotAllowedArgumentException();
 		}
 		
-		AffectedArea area = getAffectedAreaOfSelection(getSession(executor), 0);
+		AffectedArea area = getAffectedAreaOfSelection(getSession(executor), 0, 0, 0);
 		clipboardCommandsChecks(executor, area);
 		
 		LocalSession ls = getSession(executor);
@@ -498,7 +528,7 @@ public class WECommandManager implements Listener {
 			throw new IncompleteSelectException();
 		}
 		
-		AffectedArea area = getAffectedAreaOfSelection(ls, 0);
+		AffectedArea area = getAffectedAreaOfSelection(ls, 0, 0, 0);
 		clipboardCommandsChecks(executor, area);
 		
 		clipboardManager.addClipboard(getClipboardAreaOfSelection(ls, executor));

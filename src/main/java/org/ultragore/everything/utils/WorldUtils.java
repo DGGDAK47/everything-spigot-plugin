@@ -46,7 +46,7 @@ public class WorldUtils {
 		);
 	}
 	
-	public static BoundingBox boxOverLocation(Location loc, double width, double height, double depth) {
+	public static BoundingBox boxOverLocationCenter(Location loc, double width, double height, double depth) {
 		return new BoundingBox(
 			loc.getX() - width / 2,
 			loc.getY(),
