@@ -13,7 +13,7 @@ public class ClipboardManager implements Listener {
 	private List<ClipboardArea> activeClipboards = new ArrayList<ClipboardArea>();
 	
 	
-	public void addClipboard(ClipboardArea clipboard) {
+	public void setClipboard(ClipboardArea clipboard) {
 		if(hasClipboard(clipboard.getPlayer())) {
 			removeClipboard(clipboard.getPlayer());
 		}

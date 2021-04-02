@@ -2,11 +2,11 @@ package org.ultragore.everything.modules.WorldEditExtender.exceptions;
 
 public class EditBlocksLimitException extends RuntimeException {
 	public int blocksLimit;
-	public int blocksSelected;
+	public int blocksAffected;
 	
-	public EditBlocksLimitException(int blocksLimit, int blocksSelected) {
+	public EditBlocksLimitException(int blocksLimit, int blocksAffected) {
 		this.blocksLimit = blocksLimit;
-		this.blocksSelected = blocksSelected;
+		this.blocksAffected = blocksAffected;
 	}
 	
 }

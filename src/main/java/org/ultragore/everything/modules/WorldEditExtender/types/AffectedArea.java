@@ -1,6 +1,5 @@
 package org.ultragore.everything.modules.WorldEditExtender.types;
 
-import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.BoundingBox;
 
@@ -16,7 +15,16 @@ public class AffectedArea {
 	
 	
 	public int getAreaVolume() {
-		return (int)(areaBox.getWidthX() * areaBox.getHeight() * areaBox.getWidthZ());
+		int width = (int) areaBox.getWidthX();
+		width = width == 0 ? 1 : width + 1;
+		
+		int height = (int) areaBox.getHeight();
+		height = height == 0 ? 1 : height + 1;
+		
+		int depth = (int) areaBox.getWidthZ();
+		depth = depth == 0 ? 1 : depth + 1;
+		
+		return width * height * depth;
 	}
 	
 	public BoundingBox getAreaBox() {

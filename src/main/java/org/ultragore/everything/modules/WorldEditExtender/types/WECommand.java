@@ -29,20 +29,23 @@ public class WECommand {
 			for(int i = 1; i < sMessage.length; i++) {
 				
 				if(i == 1 && sMessage[i].startsWith("-") && !parameterKeys.contains(sMessage[i].substring(1))) {
-					if(sMessage[i].length() == 1) throw new InvalidWECommandSyntaxException(i);
-					options = Arrays.asList(sMessage[i].substring(1).split(""));
+					if(sMessage[i].length() == 1) throw new InvalidWECommandSyntaxException();
+					options.addAll(Arrays.asList(sMessage[i].substring(1).split("")));
 					for(String option: options) {
 						if(!Character.isLetter(option.toCharArray()[0])) {
-							throw new InvalidWECommandSyntaxException(i);
+							throw new InvalidWECommandSyntaxException();
 						}
 					}
 					continue;
 				}
 				
 				if(sMessage[i].startsWith("-") && parameterKeys.contains(sMessage[i].substring(1))) {
-					if(sMessage[i].length() == 1 || sMessage.length-1 == i) throw new InvalidWECommandSyntaxException(i);
-					parameters.put(sMessage[i].substring(1), sMessage[i+1]);
-					continue;
+					if(sMessage.length-1 == i) {
+						throw new InvalidWECommandSyntaxException();
+					} else {
+						parameters.put(sMessage[i].substring(1), sMessage[i+1]);
+						continue;						
+					}
 				}
 				
 				arguments.add(sMessage[i]);

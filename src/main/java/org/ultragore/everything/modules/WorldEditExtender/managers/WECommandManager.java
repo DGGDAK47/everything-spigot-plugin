@@ -21,7 +21,7 @@ import org.ultragore.everything.modules.WorldEditExtender.exceptions.IncompleteS
 import org.ultragore.everything.modules.WorldEditExtender.exceptions.InvalidArgumentException;
 import org.ultragore.everything.modules.WorldEditExtender.exceptions.InvalidWECommandSyntaxException;
 import org.ultragore.everything.modules.WorldEditExtender.exceptions.NoClipboardStoredException;
-import org.ultragore.everything.modules.WorldEditExtender.exceptions.NotAllowedArgumentException;
+import org.ultragore.everything.modules.WorldEditExtender.exceptions.NotAllowedArgumentsException;
 import org.ultragore.everything.modules.WorldEditExtender.exceptions.NotEnoughArgumentsException;
 import org.ultragore.everything.modules.WorldEditExtender.exceptions.PermissionDeniedException;
 import org.ultragore.everything.modules.WorldEditExtender.exceptions.PlayerUnderCooldownException;
@@ -29,6 +29,7 @@ import org.ultragore.everything.modules.WorldEditExtender.exceptions.TooManyArgu
 import org.ultragore.everything.modules.WorldEditExtender.types.AffectedArea;
 import org.ultragore.everything.modules.WorldEditExtender.types.ClipboardArea;
 import org.ultragore.everything.modules.WorldEditExtender.types.WECommand;
+import org.ultragore.everything.utils.DottedMap;
 import org.ultragore.everything.utils.WorldGuardUtils;
 import org.ultragore.everything.utils.WorldUtils;
 
@@ -101,18 +102,21 @@ public class WECommandManager implements Listener {
 	};
 	
 	private static final String MAKE_RESTRICTIONS_CHECKS_PERM = "everything.wee.restrict";
+	private static final String BYPASS_RESTRICTIONS_CHECKS_PERM = "everything.wee.restrict.bypass";
 	
 	private RestrictionManager restrictionManager;
 	private ClipboardManager clipboardManager;
 	private CooldownManager cooldownManager;
 	private WorldEditPlugin worldEditPlugin;
+	private DottedMap messages;
 	
 	
-	public WECommandManager(RestrictionManager restrictionManager, ClipboardManager clipboardManager, CooldownManager cooldownManager) {
+	public WECommandManager(RestrictionManager restrictionManager, ClipboardManager clipboardManager, CooldownManager cooldownManager, DottedMap messages) {
 		this.restrictionManager = restrictionManager;
 		this.clipboardManager = clipboardManager;
 		this.cooldownManager = cooldownManager;
 		this.worldEditPlugin = (WorldEditPlugin) Bukkit.getPluginManager().getPlugin("WorldEdit");
+		this.messages = messages;
 	}
 	
 	
@@ -177,7 +181,7 @@ public class WECommandManager implements Listener {
 			return;
 		}
 		
-		if(event.getPlayer() == null || !event.getPlayer().hasPermission(MAKE_RESTRICTIONS_CHECKS_PERM)) {
+		if(event.getPlayer() == null || !event.getPlayer().hasPermission(MAKE_RESTRICTIONS_CHECKS_PERM) || event.getPlayer().hasPermission(BYPASS_RESTRICTIONS_CHECKS_PERM)) {
 			return;
 		}
 		
@@ -201,8 +205,7 @@ public class WECommandManager implements Listener {
 			handler.invoke(this, event.getPlayer(), event.getMessage());
 		} catch(InvocationTargetException e) {
 			handleCommandException(event, e.getTargetException());
-			return;
-		}catch(Exception e) {
+		} catch(Exception e) {
 			e.printStackTrace();
 			event.setCancelled(true);
 		}
@@ -210,36 +213,57 @@ public class WECommandManager implements Listener {
 	
 	private void handleCommandException(PlayerCommandPreprocessEvent event, Throwable exception) {
 		Player p = event.getPlayer();
+		String message;
 		
 		if(exception instanceof EditBlocksLimitException) {
-			p.sendMessage("limit");
+			EditBlocksLimitException e = (EditBlocksLimitException) exception;
+			message = messages.getString("blocks_limit");
+			message = message.replaceAll("\\{AFFECTED\\}", String.valueOf(e.blocksAffected));
+			message = message.replaceAll("\\{LIMIT\\}", String.valueOf(e.blocksLimit));
+			p.sendMessage(message);
 			event.setCancelled(true);
+			
 		} else if(exception instanceof EditOthersRegionException) {
-			p.sendMessage("edit other region");
+			p.sendMessage(messages.getString("edit_other_region"));
 			event.setCancelled(true);
+			
 		} else if(exception instanceof EditRegionlessAreaException) {
-			p.sendMessage("edit world");
+			p.sendMessage(messages.getString("edit_world"));
 			event.setCancelled(true);
+			
 		} else if(exception instanceof IncompleteSelectException) {
-			p.sendMessage("incomplete select");
+			// passing command to WorldEdit
+			
 		} else if(exception instanceof InvalidArgumentException) {
-			p.sendMessage("invalid argument");
+			// passing command to WorldEdit
+			
 		} else if(exception instanceof InvalidWECommandSyntaxException) {
-			p.sendMessage("invalid command");
+			// passing command to WorldEdit
+			
 		} else if(exception instanceof NoClipboardStoredException) {
-			p.sendMessage("no clipboard");
-		} else if(exception instanceof NotAllowedArgumentException) {
-			p.sendMessage("not allowed argument");
+			// passing command to WorldEdit
+			
+		} else if(exception instanceof NotAllowedArgumentsException) {
+			NotAllowedArgumentsException e = (NotAllowedArgumentsException) exception;
+			message = messages.getString("now_allowed_arguments").replaceAll("\\{ARGUMENTS\\}", e.arguments);
+			p.sendMessage(message);
 			event.setCancelled(true);
+			
 		} else if(exception instanceof NotEnoughArgumentsException) {
-			p.sendMessage("not enough arguments");
+			// passing command to WorldEdit
+			
 		} else if(exception instanceof TooManyArgumentsException) {
-			p.sendMessage("too many arguments");
+			// passing command to WorldEdit
+			
 		} else if(exception instanceof PermissionDeniedException) {
-			p.sendMessage("permission denied");
+			// passing command to WorldEdit
+			
 		} else if(exception instanceof PlayerUnderCooldownException) {
-			p.sendMessage("wait cooldown");
+			PlayerUnderCooldownException e = (PlayerUnderCooldownException) exception;
+			message = messages.getString("under_cooldown").replaceAll("\\{SECONDS\\}", String.valueOf(e.secondsLeft));
+			p.sendMessage(message);
 			event.setCancelled(true);
+			
 		} else {
 			exception.printStackTrace();
 			event.setCancelled(true);
@@ -254,13 +278,14 @@ public class WECommandManager implements Listener {
 		
 		// blocks limit check
 		int blocksChangeLimit = restrictionManager.getBlocksChangeLimit(executor);
-		if(area.getAreaVolume() > blocksChangeLimit) {
-			throw new EditBlocksLimitException(blocksChangeLimit, (int) area.getAreaBox().getVolume());
+		int volume = area.getAreaVolume();
+		if(volume > blocksChangeLimit) {
+			throw new EditBlocksLimitException(blocksChangeLimit, volume);
 		}
 		
 		// edit non region areas check
 		if(!restrictionManager.canEditWorld(executor) &&
-			WorldGuardUtils.isRegionlessAreaCrossed(area.getAreaBox(), area.getWorld(), true))
+			WorldGuardUtils.isRegionlessAreaCrossed(area.getAreaBox(), area.getWorld()))
 		{
 			throw new EditRegionlessAreaException();
 		}
@@ -268,7 +293,7 @@ public class WECommandManager implements Listener {
 		// edit others regions check
 		if(!restrictionManager.canEditOthersRegions(executor)) {
 			LocalPlayer localPlayer = WorldGuardPlugin.inst().wrapPlayer(executor);
-			List<ProtectedRegion> crossedRegions = WorldGuardUtils.getCrossedRegions(area.getAreaBox(), area.getWorld(), true);
+			List<ProtectedRegion> crossedRegions = WorldGuardUtils.getCrossedRegions(area.getAreaBox(), area.getWorld());
 			for(ProtectedRegion pr: crossedRegions) {
 				if(!pr.isOwner(localPlayer)) {
 					throw new EditOthersRegionException();
@@ -333,7 +358,7 @@ public class WECommandManager implements Listener {
 			throw new TooManyArgumentsException();
 		}
 		
-		selectionCommandsChecks(executor, 0, 1, 0);
+		selectionCommandsChecks(executor, 0, 0, 0);
 	}
 	
 	public void overlayCommand(Player executor, String message) {
@@ -423,17 +448,17 @@ public class WECommandManager implements Listener {
 		}
 		
 		int radius;
-		int height = 0;
+		int height = 1;
 		try {
 			radius = Integer.parseInt(cmd.getArgument(1));
 			if(argumentsAmount == 3) {
-				height = Integer.parseInt(cmd.getArgument(2)) - 1;
+				height = Integer.parseInt(cmd.getArgument(2));
 			}
 		} catch(NumberFormatException e) {
 			throw new InvalidArgumentException();
 		}
 		
-		generationCommandsChecks(executor, WorldUtils.boxOverLocationCenter(executor.getLocation(), radius * 2, height, radius * 2));
+		generationCommandsChecks(executor, WorldUtils.boxOverLocationCenter(executor.getLocation(), radius * 2, height - 1, radius * 2));
 	}
 	
 	public void sphereCommand(Player executor, String message) {
@@ -492,7 +517,7 @@ public class WECommandManager implements Listener {
 			throw new InvalidArgumentException();
 		}
 		
-		generationCommandsChecks(executor, WorldUtils.boxOverLocationCenter(executor.getLocation(), size, size - 1, size));
+		generationCommandsChecks(executor, WorldUtils.boxOverLocationCenter(executor.getLocation(), size * 2 - 1, size - 1, size * 2 - 1));
 	}
 	
 	
@@ -508,7 +533,7 @@ public class WECommandManager implements Listener {
 		WECommand cmd = new WECommand(message, Arrays.asList("m"));
 		
 		if(cmd.allArgumentsSummary() > 0) {
-			throw new NotAllowedArgumentException();
+			throw new NotAllowedArgumentsException("-be -m");
 		}
 		
 		AffectedArea area = getAffectedAreaOfSelection(getSession(executor), 0, 0, 0);
@@ -519,7 +544,7 @@ public class WECommandManager implements Listener {
 			throw new IncompleteSelectException();
 		}
 		
-		clipboardManager.addClipboard(getClipboardAreaOfSelection(ls, executor));
+		clipboardManager.setClipboard(getClipboardAreaOfSelection(ls, executor));
 	}
 	
 	public void cutCommand(Player executor, String message) {
@@ -528,7 +553,7 @@ public class WECommandManager implements Listener {
 		WECommand cmd = new WECommand(message, Arrays.asList("m"));
 		
 		if(cmd.allArgumentsSummary() > 0) {
-			throw new NotAllowedArgumentException();
+			throw new NotAllowedArgumentsException("-be [leavePattern] -m");
 		}
 		
 		LocalSession ls = getSession(executor);
@@ -539,7 +564,7 @@ public class WECommandManager implements Listener {
 		AffectedArea area = getAffectedAreaOfSelection(ls, 0, 0, 0);
 		clipboardCommandsChecks(executor, area);
 		
-		clipboardManager.addClipboard(getClipboardAreaOfSelection(ls, executor));
+		clipboardManager.setClipboard(getClipboardAreaOfSelection(ls, executor));
 	}
 	
 	public void pasteCommand(Player executor, String message) {
@@ -548,7 +573,7 @@ public class WECommandManager implements Listener {
 		WECommand cmd = new WECommand(message, Arrays.asList("m"));
 		
 		if(cmd.allArgumentsSummary() > 0) {
-			throw new NotAllowedArgumentException();
+			throw new NotAllowedArgumentsException("-abenos -m");
 		}
 		
 		ClipboardArea clipboard = clipboardManager.getClipboard(executor);
@@ -584,7 +609,7 @@ public class WECommandManager implements Listener {
 		WECommand cmd = new WECommand(message, null);
 		
 		if(cmd.allArgumentsSummary() > 0) {
-			throw new NotAllowedArgumentException();
+			throw new NotAllowedArgumentsException("[times] [player]");
 		}
 	}
 	
@@ -595,7 +620,7 @@ public class WECommandManager implements Listener {
 		WECommand cmd = new WECommand(message, null);
 		
 		if(cmd.allArgumentsSummary() > 0) {
-			throw new NotAllowedArgumentException();
+			throw new NotAllowedArgumentsException("[times] [player]");
 		}
 	}
 	

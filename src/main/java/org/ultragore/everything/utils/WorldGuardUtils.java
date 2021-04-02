@@ -22,21 +22,18 @@ public class WorldGuardUtils {
 		return WorldGuard.getInstance().getPlatform().getRegionContainer().get(BukkitAdapter.adapt(world));
 	}
 	
-	public static List<ProtectedRegion> getCrossedRegions(Location location, boolean ignoreGlobal) {
+	public static List<ProtectedRegion> getCrossedRegions(Location location) {
 		List<ProtectedRegion> toReturn = new ArrayList<ProtectedRegion>();
 		
 		ApplicableRegionSet regions = getRegionManager(location.getWorld()).getApplicableRegions(BukkitAdapter.asBlockVector(location));
 		for(ProtectedRegion pr: regions) {
-			if(ignoreGlobal && pr.getId().equals("__global__")) {
-				continue;
-			}
 			toReturn.add(pr);
 		}
 		
 		return toReturn;
 	}
 	
-	public static List<ProtectedRegion> getCrossedRegions(BoundingBox area, World world, boolean ignoreGlobal) {
+	public static List<ProtectedRegion> getCrossedRegions(BoundingBox area, World world) {
 		List<ProtectedRegion> toReturn = new ArrayList<ProtectedRegion>();
 		
 		RegionManager rm = getRegionManager(world);
@@ -46,12 +43,7 @@ public class WorldGuardUtils {
 				for(double z = area.getMinZ(); z <= area.getMaxZ(); z++) {
 					regionsFromVector = rm.getApplicableRegions(BlockVector3.at(x, y, z));
 					for(ProtectedRegion pr: regionsFromVector) {
-						if(!toReturn.contains(pr)) {
-							if(ignoreGlobal && pr.getId().equals("__global__")) {
-								continue;
-							}
-							toReturn.add(pr);
-						}
+						toReturn.add(pr);
 					}
 				}
 			}
@@ -60,30 +52,14 @@ public class WorldGuardUtils {
 		return toReturn;
 	}
 	
-	public static boolean isRegionlessAreaCrossed(BoundingBox area, World world, boolean ignoreGlobal) {
-		List<ProtectedRegion> crossedRegions = new ArrayList<ProtectedRegion>();
+	public static boolean isRegionlessAreaCrossed(BoundingBox area, World world) {
 		
 		RegionManager rm = getRegionManager(world);
-		Set<ProtectedRegion> regionsFromVector;
-		ProtectedRegion globalRegion;
+		ApplicableRegionSet regionsFromVector;
 		for(double x = area.getMinX(); x <= area.getMaxX(); x++) {
 			for(double y = area.getMinY(); y <= area.getMaxY(); y++) {
 				for(double z = area.getMinZ(); z <= area.getMaxZ(); z++) {
-					regionsFromVector = rm.getApplicableRegions(BlockVector3.at(x, y, z)).getRegions();
-					
-					if(ignoreGlobal) {
-						globalRegion = null;
-						for(ProtectedRegion pr: regionsFromVector) {
-							if(pr.getId().equals("__global__")) {
-								globalRegion = pr;
-								break;
-							}
-						}
-						
-						if(globalRegion != null) {
-							regionsFromVector.remove(globalRegion);
-						}
-					}
+					regionsFromVector = rm.getApplicableRegions(BlockVector3.at(x, y, z));
 					
 					if(regionsFromVector.size() == 0) {
 						return true;
@@ -92,7 +68,7 @@ public class WorldGuardUtils {
 			}
 		}
 		
-		return crossedRegions.size() == 0;
+		return false;
 	}
 	
 }

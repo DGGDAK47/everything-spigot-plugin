@@ -17,3 +17,5 @@ commands:
       usage: /anticmd reload
    casino:
       usage: /casino reload
+   wee:
+      usage: /wee reload
