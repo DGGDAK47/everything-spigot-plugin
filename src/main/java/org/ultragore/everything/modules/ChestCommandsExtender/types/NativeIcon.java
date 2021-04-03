@@ -17,6 +17,7 @@ public class NativeIcon {
 	public Integer positionX = null;
 	public Integer positionY = null;
 	public String material = null;
+	public String nbtData = null;
 	
 	public NativeIcon(Map<String, Object> icon) {
 		if(icon == null) {
@@ -66,6 +67,10 @@ public class NativeIcon {
 		
 		if(icon.containsKey("MATERIAL")) {
 			this.material = (String) icon.get("MATERIAL");
+		}
+		
+		if(icon.containsKey("NBT-DATA")) {
+			this.nbtData = (String) icon.get("NBT-DATA");
 		}
 	}
 	
@@ -119,6 +124,10 @@ public class NativeIcon {
 		
 		if(material != null) {
 			toReturn.put("MATERIAL", material);
+		}
+		
+		if(nbtData != null) {
+			toReturn.put("NBT-DATA", nbtData);
 		}
 		
 		return toReturn;
