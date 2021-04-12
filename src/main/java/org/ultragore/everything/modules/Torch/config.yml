@@ -1,0 +1,25 @@
+usable_items:
+   shpak:
+      name: 'Ереванский шпак'
+      lore:
+      - 'Стоит 5к баксов'
+      - 'Ща с молым его въ**али'
+      - 'Ах***о вставляет бл* буду'
+      material: NETHERITE_SCRAP
+      use_message: 'Вы закинули ереванский шпак'
+      cooldown: 10
+      enchanted: false
+      milk_cancel: true
+      use_particles:
+      - 'CRIT,0,1,0,5'
+      potion_effects:
+      - 'JUMP,50,2'
+      - 'POISON,20,2,50'
+
+group_cooldowns:
+   drugs: ['shpak']
+
+messages:
+   permission_denied: '§cYou have no permissions to use this item.'
+   default_use_message: 'You have consumed {name}.'
+   cooldown: 'Wait {left}sec to use this item.'

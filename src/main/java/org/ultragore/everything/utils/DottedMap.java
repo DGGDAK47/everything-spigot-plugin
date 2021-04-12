@@ -28,10 +28,15 @@ public class DottedMap {
 		
 		if(splitedPath.length == 1) {
 			return map.get(path);
+		} else if (path.length() == 0) {
+			return null;
 		}
 		
 		Map<String, Object> extractedPart = this.map;
 		for(int i = 0; i < splitedPath.length; i++) {
+			if(extractedPart == null) {
+				return null;
+			}
 			if(i < splitedPath.length - 1) {
 				extractedPart = (Map<String, Object>) extractedPart.get(splitedPath[i]);
 			} else {
@@ -54,6 +59,10 @@ public class DottedMap {
 		return (Float) getObject(path);
 	}
 	
+	public Double getDouble(String path) {
+		return (Double) getObject(path);
+	}
+	
 	public Boolean getBoolean(String path) {
 		return (Boolean) getObject(path);
 	}
@@ -64,5 +73,9 @@ public class DottedMap {
 	
 	public List<Object> getList(String path) {
 		return (List<Object>) getObject(path);
+	}
+	
+	public boolean hasPath(String path) {
+		return getObject(path) != null;
 	}
 }

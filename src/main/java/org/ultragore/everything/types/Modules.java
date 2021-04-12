@@ -5,7 +5,8 @@ public enum Modules {
 	CHEST_COMMANDS_EXTENDER ("ChestCommandsExtender", "cce", org.ultragore.everything.modules.ChestCommandsExtender.ChestCommandsExtender.class),
 	ANTI_CMD ("AntiCMD", "anticmd", org.ultragore.everything.modules.AntiCMD.AntiCMD.class),
 	CASINO ("Casino", "casino", org.ultragore.everything.modules.Casino.Casino.class),
-	WE_EXTENDER ("WEExtender", "wee", org.ultragore.everything.modules.WorldEditExtender.WorldEditExtender.class);
+	WE_EXTENDER ("WEExtender", "wee", org.ultragore.everything.modules.WorldEditExtender.WorldEditExtender.class),
+	TORCH ("Torch", "torch", org.ultragore.everything.modules.Torch.Torch.class);
 	
 	private String moduleName;
 	private String moduleCommand;

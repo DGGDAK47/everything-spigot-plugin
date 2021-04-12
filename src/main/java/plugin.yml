@@ -19,3 +19,9 @@ commands:
       usage: /casino reload
    wee:
       usage: /wee reload
+   torch:
+      usage: |
+         Torch command usage
+         /torch reload
+         /torch give <nickname> <label> [amount]
+         /torch list
