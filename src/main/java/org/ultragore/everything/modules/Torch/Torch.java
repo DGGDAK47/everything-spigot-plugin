@@ -116,8 +116,6 @@ public class Torch extends Module implements CommandExecutor {
 					sender.sendMessage(String.format("§2%s %s has been given to %s", args[2], amount, p.getName()));
 				} else if(code == 0) {
 					sender.sendMessage("§cNo such label.");
-				} else if(code == -1) {
-					sender.sendMessage("§cPlayer has no enough inventory space.");
 				}
 				
 			} else {

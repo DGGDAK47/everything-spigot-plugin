@@ -113,6 +113,6 @@ public class CooldownManager {
 		}
 		
 		BukkitTask task = Bukkit.getScheduler().runTaskLater(plugin, new CooldownExpireTask(playerName, label), duration * 20);
-		activeCooldowns.add(new Cooldown(task, System.currentTimeMillis(), playerName, labels, label));
+		activeCooldowns.add(new Cooldown(task, System.currentTimeMillis(), duration, playerName, labels, label));
 	}
 }

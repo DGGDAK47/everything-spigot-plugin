@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -78,7 +79,6 @@ public class ItemsManager implements Listener {
 	 * @return code: 
 	 *  1 - OK
 	 *  0 - no such label
-	 * -1 - no free space
 	 */
 	public int giveItem(Player player, String label, int amount) {
 		UsableItem uItem = getItemByLabel(label);
@@ -88,28 +88,32 @@ public class ItemsManager implements Listener {
 		
 		PlayerInventory inv = player.getInventory();
 		int stackSize = uItem.getMaterial().getMaxStackSize();
-		int slotsRequired = (int) Math.ceil((double)amount / (double)stackSize);
-		if(!hasEmptySlots(inv, slotsRequired)) {
-			return -1;
-		}
 		
-		ItemStack[] itemsToAdd = new ItemStack[slotsRequired];
+		ItemStack[] itemsToAdd = new ItemStack[(int) Math.ceil((double)amount / (double)stackSize)];
 		ItemStack item = uItem.formItemStack(1);
-		for(int i = 0; i < slotsRequired; i++) {
-			if(i == slotsRequired - 1) {
-				if(amount == stackSize) {
-					item.setAmount(stackSize);
+		for(int i = 0; i < itemsToAdd.length; i++) {
+			if(i == itemsToAdd.length - 1) {
+				Double stacked = (double)amount / (double)stackSize;
+				if ((stacked == Math.floor(stacked)) && !Double.isInfinite(stacked)) {
+				    item.setAmount(stackSize);
 				} else {
-					double valueAfterDot = Double.parseDouble( "0." + String.valueOf((double)amount / (double)stackSize).split("\\.")[1] );
-					item.setAmount((int) (valueAfterDot * stackSize));
+					item.setAmount((int) (stackSize * Double.parseDouble("0." + stacked.toString().split("\\.")[1])));
 				}
 			} else {
 				item.setAmount(stackSize);
 			}
+			
 			itemsToAdd[i] = item.clone();
 		}
 		
-		inv.addItem(itemsToAdd);
+		Map<Integer, ItemStack> itemsToDrop = inv.addItem(itemsToAdd);
+		if(itemsToDrop.size() > 0) {
+			Location loc = player.getLocation().add(0, 0, 0);
+			for(int key: itemsToDrop.keySet()) {
+				loc.getWorld().dropItemNaturally(loc, itemsToDrop.get(key));
+			}
+		}
+		
 		return 1;
 	}
 	public static boolean hasEmptySlots(PlayerInventory inv, int amount) {
@@ -127,6 +131,7 @@ public class ItemsManager implements Listener {
 		
 		return false;
 	}
+	
 	
 	
 	@EventHandler
@@ -149,7 +154,7 @@ public class ItemsManager implements Listener {
 			Cooldown c = cooldownManager.getCooldown(p.getName(), uItem.getLabel());
 			if(c != null) {
 				long currentTimestamp = System.currentTimeMillis();
-				Integer secLeft = (int) (uItem.getCooldown() - ((currentTimestamp - c.createTimestamp) / 1000));
+				Integer secLeft = (int) (c.duration - ((currentTimestamp - c.createTimestamp) / 1000));
 				
 				p.sendMessage(messages.getString("cooldown").replaceAll("\\{left\\}", secLeft.toString()));
 				return;
@@ -197,12 +202,14 @@ public class ItemsManager implements Listener {
 			return;
 		}
 		
+		e.setCancelled(true);
+		
 		Player p = e.getPlayer();
 		if(uItem.getCooldown() != null) {
 			Cooldown c = cooldownManager.getCooldown(p.getName(), uItem.getLabel());
 			if(c != null) {
 				long currentTimestamp = System.currentTimeMillis();
-				Integer secLeft = (int) (uItem.getCooldown() - ((currentTimestamp - c.createTimestamp) / 1000));
+				Integer secLeft = (int) (c.duration - ((currentTimestamp - c.createTimestamp) / 1000));
 				
 				p.sendMessage(messages.getString("cooldown").replaceAll("\\{left\\}", secLeft.toString()));
 				return;
