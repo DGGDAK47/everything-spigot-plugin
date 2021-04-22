@@ -50,4 +50,10 @@ lobbies:
             material: GLISTERING_MELON_SLICE
             slot_number: 9
             right_click_command: 'mlobby leave'
+
             
+            
+minigames:
+   murder_mansion:
+      game_group: 'minigame-murder-mansion'
+      world_name: 'world_murder_mansion'

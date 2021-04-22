@@ -1,4 +1,4 @@
-package org.ultragore.everything.modules.MinigamesLobby.types;
+package org.ultragore.everything.modules.MinigamesAdapter.types;
 
 import org.bukkit.World;
 import org.bukkit.scheduler.BukkitTask;

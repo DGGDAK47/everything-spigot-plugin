@@ -1,4 +1,4 @@
-package org.ultragore.everything.modules.MinigamesLobby.managers;
+package org.ultragore.everything.modules.MinigamesAdapter.managers;
 
 import java.util.List;
 import java.util.Map;
@@ -11,8 +11,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
-import org.ultragore.everything.modules.MinigamesLobby.MinigamesLobby;
-import org.ultragore.everything.modules.MinigamesLobby.types.Lobby;
+import org.ultragore.everything.modules.MinigamesAdapter.MinigamesAdapter;
+import org.ultragore.everything.modules.MinigamesAdapter.types.Lobby;
 import org.ultragore.everything.utils.DottedMap;
 
 public class CommandsManager implements CommandExecutor, Listener {
@@ -21,12 +21,12 @@ public class CommandsManager implements CommandExecutor, Listener {
 	public final static String LEAVE_COMMAND_PERM = "everything.mlobby.cmd.leave";
 	public final static String JOIN_COMMAND_PERM = "everything.mlobby.cmd.join";
 	
-	private MinigamesLobby module;
+	private MinigamesAdapter module;
 	private LobbyManager lobbyManager;
 	private DottedMap messages;
 	
 	
-	public CommandsManager(MinigamesLobby module, LobbyManager lobbyManager, Map<String, Object> messages) {
+	public CommandsManager(MinigamesAdapter module, LobbyManager lobbyManager, Map<String, Object> messages) {
 		this.module = module;
 		this.lobbyManager = lobbyManager;
 		this.messages = new DottedMap(messages);
@@ -41,7 +41,7 @@ public class CommandsManager implements CommandExecutor, Listener {
 	public void onPlayerCommandPreprocess(PlayerCommandPreprocessEvent e) {
 		Lobby lobby = lobbyManager.getLobby(e.getPlayer());
 		if(lobby != null &&
-		   !e.getPlayer().hasPermission(MinigamesLobby.BYPASS_PERM) &&
+		   !e.getPlayer().hasPermission(MinigamesAdapter.BYPASS_PERM) &&
 		   !lobby.isCommandAllowed(e.getMessage()))
 		{
 			e.getPlayer().sendMessage(messages.getString("restricted_command"));

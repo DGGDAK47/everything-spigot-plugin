@@ -1,4 +1,4 @@
-package org.ultragore.everything.modules.MinigamesLobby.types;
+package org.ultragore.everything.modules.MinigamesAdapter.types;
 
 import java.util.List;
 import java.util.Map;

@@ -7,7 +7,7 @@ public enum Modules {
 	CASINO ("Casino", "casino", org.ultragore.everything.modules.Casino.Casino.class),
 	WE_EXTENDER ("WEExtender", "wee", org.ultragore.everything.modules.WorldEditExtender.WorldEditExtender.class),
 	TORCH ("Torch", "torch", org.ultragore.everything.modules.Torch.Torch.class),
-	MINIGAMES_LOBBY ("MinigamesLobby", "mlobby", org.ultragore.everything.modules.MinigamesLobby.MinigamesLobby.class);
+	MINIGAMES_ADAPTER ("MinigamesAdapter", "mlobby", org.ultragore.everything.modules.MinigamesAdapter.MinigamesAdapter.class);
 	
 	private String moduleName;
 	private String moduleCommand;

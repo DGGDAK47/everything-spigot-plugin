@@ -1,4 +1,4 @@
-package org.ultragore.everything.modules.MinigamesLobby.managers;
+package org.ultragore.everything.modules.MinigamesAdapter.managers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,17 +30,16 @@ import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
-import org.ultragore.everything.modules.MinigamesLobby.MinigamesLobby;
-import org.ultragore.everything.modules.MinigamesLobby.events.LobbyJoinEvent;
-import org.ultragore.everything.modules.MinigamesLobby.events.LobbyLeaveEvent;
-import org.ultragore.everything.modules.MinigamesLobby.types.Lobby;
-import org.ultragore.everything.modules.MinigamesLobby.types.TimeHolder;
+import org.ultragore.everything.modules.MinigamesAdapter.MinigamesAdapter;
+import org.ultragore.everything.modules.MinigamesAdapter.events.LobbyJoinEvent;
+import org.ultragore.everything.modules.MinigamesAdapter.events.LobbyLeaveEvent;
+import org.ultragore.everything.modules.MinigamesAdapter.types.Lobby;
+import org.ultragore.everything.modules.MinigamesAdapter.types.TimeHolder;
 
 import com.sk89q.worldguard.bukkit.event.block.PlaceBlockEvent;
 
@@ -81,7 +80,7 @@ public class EnvironmentRestrictionsManager implements Listener {
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
-		if(e.getPlayer().hasPermission(MinigamesLobby.BYPASS_PERM)) {
+		if(e.getPlayer().hasPermission(MinigamesAdapter.BYPASS_PERM)) {
 			return;
 		}
 		
@@ -98,7 +97,7 @@ public class EnvironmentRestrictionsManager implements Listener {
 	@EventHandler
 	public void onPlayerInteract(PlayerInteractEvent e) {
 		Lobby lobby = lobbyManager.getLobby(e.getPlayer());
-		if(lobby == null || e.getPlayer() != null && e.getPlayer().hasPermission(MinigamesLobby.BYPASS_PERM)) {
+		if(lobby == null || e.getPlayer() != null && e.getPlayer().hasPermission(MinigamesAdapter.BYPASS_PERM)) {
 			return;
 		}
 		
@@ -122,7 +121,7 @@ public class EnvironmentRestrictionsManager implements Listener {
 	@EventHandler
 	public void onBlockPlace(BlockPlaceEvent e) {
 		if(lobbyManager.hasLobby(e.getPlayer()) &&
-		   !e.getPlayer().hasPermission(MinigamesLobby.BYPASS_PERM))
+		   !e.getPlayer().hasPermission(MinigamesAdapter.BYPASS_PERM))
 		{
 			e.setCancelled(true);
 		}
@@ -131,7 +130,7 @@ public class EnvironmentRestrictionsManager implements Listener {
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent e) {
 		if(lobbyManager.hasLobby(e.getBlock().getWorld().getName()) &&
-		   !e.getPlayer().hasPermission(MinigamesLobby.BYPASS_PERM)) {
+		   !e.getPlayer().hasPermission(MinigamesAdapter.BYPASS_PERM)) {
 			e.setCancelled(true);
 		}
 	}
@@ -139,7 +138,7 @@ public class EnvironmentRestrictionsManager implements Listener {
 	@EventHandler
 	public void onBlockIgnite(BlockIgniteEvent e) {
 		if(lobbyManager.hasLobby(e.getPlayer()) &&
-		   !e.getPlayer().hasPermission(MinigamesLobby.BYPASS_PERM))
+		   !e.getPlayer().hasPermission(MinigamesAdapter.BYPASS_PERM))
 		{
 			e.setCancelled(true);
 		}
@@ -148,7 +147,7 @@ public class EnvironmentRestrictionsManager implements Listener {
 	@EventHandler
 	public void onItemDrop(PlayerDropItemEvent e) {
 		if(lobbyManager.hasLobby(e.getPlayer()) &&
-		   !e.getPlayer().hasPermission(MinigamesLobby.BYPASS_PERM))
+		   !e.getPlayer().hasPermission(MinigamesAdapter.BYPASS_PERM))
 		{
 			e.setCancelled(true);
 		}
@@ -157,7 +156,7 @@ public class EnvironmentRestrictionsManager implements Listener {
 	@EventHandler
 	public void onItemPickUp(EntityPickupItemEvent e) {
 		if(lobbyManager.hasLobby(e.getEntity().getWorld().getName()) &&
-		   !e.getEntity().hasPermission(MinigamesLobby.BYPASS_PERM))
+		   !e.getEntity().hasPermission(MinigamesAdapter.BYPASS_PERM))
 		{
 			e.setCancelled(true);
 		}
@@ -183,7 +182,7 @@ public class EnvironmentRestrictionsManager implements Listener {
 	@EventHandler
 	public void onInventoryClick(InventoryClickEvent e) {
 		if(lobbyManager.hasLobby(e.getWhoClicked().getWorld().getName()) &&
-		   !e.getWhoClicked().hasPermission(MinigamesLobby.BYPASS_PERM))
+		   !e.getWhoClicked().hasPermission(MinigamesAdapter.BYPASS_PERM))
 		{
 			e.setCancelled(true);
 		}
@@ -211,7 +210,7 @@ public class EnvironmentRestrictionsManager implements Listener {
 	public void onFrameInteract(PlayerInteractAtEntityEvent e) {
 		if(EntityType.ITEM_FRAME == e.getRightClicked().getType() &&
 		   lobbyManager.hasLobby(e.getRightClicked().getWorld().getName()) &&
-		   !e.getPlayer().hasPermission(MinigamesLobby.BYPASS_PERM))
+		   !e.getPlayer().hasPermission(MinigamesAdapter.BYPASS_PERM))
 		{
 			e.setCancelled(true);
 		}

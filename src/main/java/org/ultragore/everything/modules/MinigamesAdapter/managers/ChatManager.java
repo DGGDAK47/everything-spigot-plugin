@@ -1,4 +1,4 @@
-package org.ultragore.everything.modules.MinigamesLobby.managers;
+package org.ultragore.everything.modules.MinigamesAdapter.managers;
 
 import java.util.List;
 
@@ -6,8 +6,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
-import org.ultragore.everything.modules.MinigamesLobby.MinigamesLobby;
-import org.ultragore.everything.modules.MinigamesLobby.types.Lobby;
+import org.ultragore.everything.modules.MinigamesAdapter.MinigamesAdapter;
+import org.ultragore.everything.modules.MinigamesAdapter.types.Lobby;
 
 public class ChatManager implements Listener{
 	private LobbyManager lobbyManager;
@@ -19,7 +19,7 @@ public class ChatManager implements Listener{
 	
 	@EventHandler
 	public void onPlayerChat(AsyncPlayerChatEvent e) {
-		if(e.getPlayer().hasPermission(MinigamesLobby.BYPASS_PERM)) {
+		if(e.getPlayer().hasPermission(MinigamesAdapter.BYPASS_PERM)) {
 			return;
 		}
 		

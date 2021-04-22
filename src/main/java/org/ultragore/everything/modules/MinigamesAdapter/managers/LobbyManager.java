@@ -1,4 +1,4 @@
-package org.ultragore.everything.modules.MinigamesLobby.managers;
+package org.ultragore.everything.modules.MinigamesAdapter.managers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,19 +18,21 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.spigotmc.event.player.PlayerSpawnLocationEvent;
-import org.ultragore.everything.modules.MinigamesLobby.MinigamesLobby;
-import org.ultragore.everything.modules.MinigamesLobby.events.LobbyJoinEvent;
-import org.ultragore.everything.modules.MinigamesLobby.events.LobbyLeaveEvent;
-import org.ultragore.everything.modules.MinigamesLobby.types.Lobby;
+import org.ultragore.everything.modules.MinigamesAdapter.MinigamesAdapter;
+import org.ultragore.everything.modules.MinigamesAdapter.events.LobbyJoinEvent;
+import org.ultragore.everything.modules.MinigamesAdapter.events.LobbyLeaveEvent;
+import org.ultragore.everything.modules.MinigamesAdapter.types.Lobby;
 import org.ultragore.everything.utils.WorldUtils;
 
 public class LobbyManager implements Listener {
 	private List<Lobby> lobbies = new ArrayList<Lobby>();
 	private Location serverSpawnLocation;
 	private Sound lobbyJoinSound;
+	private MinigamesManager minigamesManager;
 	
 	
-	public LobbyManager(Sound lobbyJoinSound, Map<String, Map> map, String serverSpawnLocation) {
+	public LobbyManager(MinigamesManager minigamesManager, Sound lobbyJoinSound, Map<String, Map> map, String serverSpawnLocation) {
+		this.minigamesManager = minigamesManager;
 		this.lobbyJoinSound = lobbyJoinSound;
 		this.serverSpawnLocation = WorldUtils.parseLocation(serverSpawnLocation);
 		Set<String> keys = map.keySet();
@@ -100,16 +102,16 @@ public class LobbyManager implements Listener {
 	
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent e) {
-		Lobby lobby = getLobby(e.getPlayer().getWorld().getName());
+		Lobby lobby = getLobby(e.getPlayer());
 		if(lobby != null) {
 			e.getPlayer().teleport(serverSpawnLocation);
-			Bukkit.getPluginManager().callEvent(new LobbyLeaveEvent(e.getPlayer(), lobby));
+			Bukkit.getPluginManager().callEvent(new LobbyLeaveEvent(e.getPlayer(), lobby, false));
 		}
 	}
 	
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent e) {
-		if(e.getPlayer().hasPermission(MinigamesLobby.BYPASS_PERM)) {
+		if(e.getPlayer().hasPermission(MinigamesAdapter.BYPASS_PERM)) {
 			return;
 		}
 		
@@ -124,13 +126,13 @@ public class LobbyManager implements Listener {
 		if(fromLobby != null) {
 			if(fromLobby.hasParticipant(e.getPlayer())) {
 				fromLobby.removeParticipant(e.getPlayer());
-				Bukkit.getPluginManager().callEvent(new LobbyLeaveEvent(e.getPlayer(), fromLobby));				
+				Bukkit.getPluginManager().callEvent(new LobbyLeaveEvent(e.getPlayer(), fromLobby, minigamesManager.hasMinigame(e.getTo().getWorld().getName())));				
 			}
 		}
 		
 		if(toLobby != null) {
 			toLobby.addParticipant(e.getPlayer());
-			Bukkit.getPluginManager().callEvent(new LobbyJoinEvent(e.getPlayer(), toLobby));
+			Bukkit.getPluginManager().callEvent(new LobbyJoinEvent(e.getPlayer(), toLobby, minigamesManager.hasMinigame(e.getFrom().getWorld().getName())));
 			e.getPlayer().playSound(e.getPlayer().getLocation(), lobbyJoinSound, 0.2F, 1.0F);
 		}
 	}
@@ -146,7 +148,7 @@ public class LobbyManager implements Listener {
 	
 	@EventHandler
 	public void onPlayerSpawn(PlayerSpawnLocationEvent e) {
-		if(e.getPlayer().hasPermission(MinigamesLobby.BYPASS_PERM)) {
+		if(e.getPlayer().hasPermission(MinigamesAdapter.BYPASS_PERM)) {
 			return;
 		}
 		
