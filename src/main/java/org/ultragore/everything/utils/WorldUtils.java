@@ -23,14 +23,29 @@ public class WorldUtils {
 		float yaw = 0;
 		float pitch = 0;
 		
-		if(data.length == 5) {
+		if(data.length >= 5) {
 			yaw = Float.parseFloat(data[4]);
-		}
-		if(data.length == 6) {
-			yaw = Float.parseFloat(data[5]);
+			if(data.length == 6) {
+				pitch = Float.parseFloat(data[5]);
+			}
 		}
 		
+		
 		return new Location(world, x, y, z, yaw, pitch);
+	}
+	
+	/**
+	 * Extracts BoundingBox from string. Format:
+	 * From:<x1> <y1> <z1>|To:<x2> <y2> <z2>
+	 * @param sBox
+	 * @return BoundingBox
+	 */
+	public static BoundingBox parseBoundingBox(String sBox) {
+		String[] arr = sBox.split("\\|");
+		String[] from = arr[0].split(" ");
+		String[] to = arr[1].split(" ");
+		
+		return new BoundingBox(Double.parseDouble(from[0].split(":")[1]), Double.parseDouble(from[1]), Double.parseDouble(from[2]), Double.parseDouble(to[0].split(":")[1]), Double.parseDouble(to[1]), Double.parseDouble(to[2]));
 	}
 	
 	

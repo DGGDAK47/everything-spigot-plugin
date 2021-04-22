@@ -6,7 +6,8 @@ public enum Modules {
 	ANTI_CMD ("AntiCMD", "anticmd", org.ultragore.everything.modules.AntiCMD.AntiCMD.class),
 	CASINO ("Casino", "casino", org.ultragore.everything.modules.Casino.Casino.class),
 	WE_EXTENDER ("WEExtender", "wee", org.ultragore.everything.modules.WorldEditExtender.WorldEditExtender.class),
-	TORCH ("Torch", "torch", org.ultragore.everything.modules.Torch.Torch.class);
+	TORCH ("Torch", "torch", org.ultragore.everything.modules.Torch.Torch.class),
+	MINIGAMES_LOBBY ("MinigamesLobby", "mlobby", org.ultragore.everything.modules.MinigamesLobby.MinigamesLobby.class);
 	
 	private String moduleName;
 	private String moduleCommand;

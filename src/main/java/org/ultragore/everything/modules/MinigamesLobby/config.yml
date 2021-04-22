@@ -1,0 +1,53 @@
+#permissions:
+# everything.mlobby.bypass - bypass lobby features
+# everything.mlobby.cmd.reload - access to /mlobby reload command
+# everything.mlobby.cmd.leave - access to /mlobby leave command
+# everything.mlobby.cmd.join - access to /mlobby join command
+#
+#
+#lobbies:
+#   lobby:
+#      name: 'lobby1'
+#      spawn_location: <world> <x> <y> <z> [yaw[pitch]]
+#      lobby_group: 'lobby-user'
+#      world_name: 'world_lobby'
+#      allowed_interact_materials: []
+#      allowed_commands: []
+#      world_constant_time: ticks    #optional
+#      message_format: '{LOBBY} {PLAYER} > {MESSAGE}'
+#      lobby_items:         # lobby_items: [] if no items
+#        item:
+#          name: ''
+#          lore: []
+#          enchanted: true/false
+#          material: MAT
+#          slot_number: 1
+#          right_click_command: 'cmd'
+
+lobby_join_sound: BLOCK_GLASS_BREAK
+server_spawn_location: 'world -111.5 72 -235.5 -90 0'
+
+messages:
+   restricted_command: 'This command doesn''t exist or not allowed for this lobby'
+
+lobbies:
+   lobby:
+      name: 'lobby1'
+      spawn_location: 'world_lobby -69.5 56 -80.5'
+      lobby_group: 'lobby-user'
+      world_name: 'world_lobby'
+      allowed_interact_materials: []
+      allowed_commands: []
+      world_constant_time: 3600
+      lobby_box: 'From:-120 100 -120|To:0 0 0'
+      message_format: '{LOBBY} {PLAYER} > {MESSAGE}'
+      lobby_items:
+         leave_lobby:
+            name: 'Leave lobby'
+            lore:
+            - 'Click RMB to leave the lobby'
+            enchanted: true
+            material: GLISTERING_MELON_SLICE
+            slot_number: 9
+            right_click_command: 'mlobby leave'
+            

@@ -1,7 +1,7 @@
 name: Everything
 main: org.ultragore.everything.Everything
 version: 0.1
-depend: [WorldGuard, WorldEdit, ChestCommands, AuthMe, Vault, LuckPerms]
+depend: [WorldGuard, WorldEdit, ChestCommands, AuthMe, Vault, LuckPerms, Multiverse-Core]
 api-version: 1.16
 commands:
    opregions:
@@ -21,7 +21,13 @@ commands:
       usage: /wee reload
    torch:
       usage: |
-         Torch command usage
+         Torch commands usage
          /torch reload
          /torch give <nickname> <label> [amount]
          /torch list
+   mlobby:
+      usage: |
+         MinigamesLobby commands usage
+         /mlobby reload
+         /mlobby join <lobby_world>
+         /mlobby leave
