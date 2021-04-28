@@ -45,7 +45,7 @@ public class IconPatterns {
 				String[] modifiers = pattern.split("\\$");
 				
 				if(modifiers.length >= 2) {
-					icon.price = icon.price * Float.parseFloat(modifiers[1]);
+					icon.price = round(icon.price * Double.parseDouble(modifiers[1]), 2);
 				}
 				
 				if(modifiers.length == 3) {
@@ -117,5 +117,14 @@ public class IconPatterns {
 		}
 		
 		return toReturn;
+	}
+	
+	public static double round(double value, int places) {
+	    if (places < 0) throw new IllegalArgumentException();
+
+	    long factor = (long) Math.pow(10, places);
+	    value = value * factor;
+	    long tmp = Math.round(value);
+	    return (double) tmp / factor;
 	}
 }
