@@ -11,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.ultragore.everything.types.Module;
@@ -22,7 +23,7 @@ public class AntiCMD extends Module implements Listener, CommandExecutor {
 	public static final String RELOAD_PERM_NODE = "anticmd.reload";
 	
 	
-	private List<Map<String, String>> excludedCommands;
+	private List<ExcludedCommand> excludedCommands;
 	private String defaultCnacelMessage;
 	
 	
@@ -42,10 +43,10 @@ public class AntiCMD extends Module implements Listener, CommandExecutor {
 		printLog("Reading config..");
 		defaultCnacelMessage = config.getString("default_cancel_message");
 		
-		excludedCommands = new ArrayList();
+		excludedCommands = new ArrayList<ExcludedCommand>();
 		
 		for(Object cmdMap: config.getList("excluded_commands")) {
-			excludedCommands.add((Map<String, String>) cmdMap);
+			excludedCommands.add(new ExcludedCommand((Map<String, String>) cmdMap));
 		}
 		
 		printLog("Registering commands and events..");
@@ -59,6 +60,8 @@ public class AntiCMD extends Module implements Listener, CommandExecutor {
 	@Override
 	public void disableModule() {
 		this.active = false;
+		printLog("Unregistering events..");
+		HandlerList.unregisterAll(this);
 		Logger.moduleDisabled(this);
 	}
 	
@@ -80,7 +83,7 @@ public class AntiCMD extends Module implements Listener, CommandExecutor {
 		excludedCommands = new ArrayList();
 		
 		for(Object cmdMap: config.getList("excluded_commands")) {
-			excludedCommands.add((Map<String, String>) cmdMap);
+			excludedCommands.add(new ExcludedCommand((Map<String, String>) cmdMap));
 		}
 		
 		return true;
@@ -118,14 +121,20 @@ public class AntiCMD extends Module implements Listener, CommandExecutor {
 		}
 		
 		String msg = event.getMessage();
-		for(Map<String, String> excludedCmd: excludedCommands) {
-			if(excludedCmd.get("cmd").equals(msg)) {
+		for(ExcludedCommand ecommand: excludedCommands) {
+			if(ecommand.command.equals(msg)) {
 				event.setCancelled(true);
 				
-				if(excludedCmd.containsKey("cancel_message")) {
-					player.sendMessage(excludedCmd.get("cancel_message"));
+				if(ecommand.cancelMessage != null) {
+					if(!ecommand.cancelMessage.equals("NONE")) {
+						player.sendMessage(ecommand.cancelMessage);						
+					}
 				} else {
 					player.sendMessage(defaultCnacelMessage);
+				}
+				
+				if(ecommand.issueInsteadCommand != null) {
+					player.performCommand(ecommand.issueInsteadCommand);
 				}
 				
 				break;
