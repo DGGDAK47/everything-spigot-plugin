@@ -1,3 +1,23 @@
+#Usable item map description:
+# name: '...'       #required
+# material: MAT     #required
+# enchanted: bool   #required
+# milk_cancel: bool #required
+# lore: ['...']
+# use_message: '...'
+# cooldown: 123sec
+# use_particles:  ['particle,offsetX,offsetY,offsetZ,count']
+# potion_effects: ['<effect>,<duration>[,amplifier[,chance]]']
+# food_level_up: 123  # 1 level is a half of food icon
+# potion_color: 'R G B' # 0-255 0-255 0-255
+#
+#
+#Permissions;
+# everything.torch.consume - allows to use usable items.
+# everything.torch.give - access to /torch give command
+# everything.torch.reload - access to /torch reload command
+# everything.torch.list - access to /torch list command
+
 usable_items:
    shpak:
       name: 'Ереванский шпак'

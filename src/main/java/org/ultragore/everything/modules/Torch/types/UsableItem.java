@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -15,10 +16,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.ultragore.everything.utils.DottedMap;
+
+import net.md_5.bungee.api.ChatColor;
 
 public class UsableItem {
 	private String label;
@@ -31,12 +35,15 @@ public class UsableItem {
 	private boolean enchanted;
 	private boolean milkCancel;
 	private List<ParticleData> useParticles = null;
-	private ArrayList<PotionEffect> potionEffects = new ArrayList<PotionEffect>();
-	private Map<PotionEffect, Integer> randomPotionEffects = new Hashtable<PotionEffect, Integer>();
+	private ArrayList<PotionEffect> potionEffects = null;
+	private Map<PotionEffect, Integer> randomPotionEffects = null;
+	private Integer foodLevelUp = null;
+	private Color potionColor;
 	
 	
 	public UsableItem(String label, DottedMap map) {
 		this.label = label;
+		
 		name = map.getString("name");
 		
 		Object ob = map.getList("lore");
@@ -65,28 +72,35 @@ public class UsableItem {
 		
 		milkCancel = map.getBoolean("milk_cancel");
 		
-		List<String> potionEffects = (List) map.getList("potion_effects");
-		String[] effectData;
-		int amplifier;
-		PotionEffect potionEffect;
-		for(String effect: potionEffects) {
-			// effect -> "<effect>,<duration>[,amplifier[,chance]]"
-			effectData = effect.split(",");
+		ob = map.getObject("potion_effects");
+		if(ob != null) {
+			potionEffects = new ArrayList<PotionEffect>();
+			randomPotionEffects = new Hashtable<PotionEffect, Integer>();
 			
-			if(effectData.length >= 3) {
-				amplifier = Integer.parseInt(effectData[2]);
-			} else {
-				amplifier = 1;
-			}
-			
-			potionEffect = new PotionEffect(PotionEffectType.getByName(effectData[0]), Integer.parseInt(effectData[1]) * 20, amplifier);
-			
-			if(effectData.length == 4) {
-				randomPotionEffects.put(potionEffect, Integer.parseInt(effectData[3]));
-			} else {
-				this.potionEffects.add(potionEffect);
+			List<String> effects = (List<String>) ob;
+			String[] effectData;
+			int amplifier;
+			PotionEffect potionEffect;
+			for(String effect: effects) {
+				// effect -> "<effect>,<duration>[,amplifier[,chance]]"
+				effectData = effect.split(",");
+				
+				if(effectData.length >= 3) {
+					amplifier = Integer.parseInt(effectData[2]);
+				} else {
+					amplifier = 1;
+				}
+				
+				potionEffect = new PotionEffect(PotionEffectType.getByName(effectData[0]), Integer.parseInt(effectData[1]) * 20, amplifier);
+				
+				if(effectData.length == 4) {
+					randomPotionEffects.put(potionEffect, Integer.parseInt(effectData[3]));
+				} else {
+					this.potionEffects.add(potionEffect);
+				}
 			}
 		}
+		
 		
 		ob = map.getList("use_particles");
 		if(ob != null) {
@@ -97,8 +111,18 @@ public class UsableItem {
 			}
 		}
 		
+		
+		foodLevelUp = map.getInteger("food_level_up");
+		
+		String potionColor = map.getString("potion_color");
+		if(potionColor != null) {
+			// potionColor -> "R G B"
+			String[] rgb = potionColor.split(" ");
+			this.potionColor = Color.fromRGB(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
+		} else {
+			this.potionColor = Color.PURPLE;
+		}
 	}
-	
 	
 
 	public String getLabel() {
@@ -134,6 +158,7 @@ public class UsableItem {
 	}
 
 	
+	
 	public ItemStack formItemStack(int amount) {
 		ItemStack item = new ItemStack(material, amount);
 		ItemMeta meta = item.getItemMeta();
@@ -143,6 +168,19 @@ public class UsableItem {
 		if(lore != null) {
 			meta.setLore(lore);
 		}
+		
+		if(Material.POTION == material) {
+			PotionMeta pmeta = (PotionMeta) meta;
+			
+			if(potionEffects != null) {
+				for(PotionEffect pe: potionEffects) {
+					pmeta.addCustomEffect(pe, true);					
+				}
+			}
+			
+			pmeta.setColor(potionColor);
+		}
+		
 		item.setItemMeta(meta);
 		
 		if(enchanted) {
@@ -150,6 +188,17 @@ public class UsableItem {
 		}
 		
 		return item;
+	}
+	
+	
+	public void addFoodLevel(Player p) {
+		if(foodLevelUp != null) {
+			if(p.getFoodLevel() + foodLevelUp < 0) {
+				p.setFoodLevel(0);
+			} else {
+				p.setFoodLevel(p.getFoodLevel() + foodLevelUp);				
+			}
+		}
 	}
 	
 	public void spawnParticles(Location loc) {
@@ -160,7 +209,13 @@ public class UsableItem {
 	}
 	
 	public void applyPotionEffects(Player p) {
-		List<PotionEffect> toApply = (List<PotionEffect>) potionEffects.clone();
+		for(PotionEffect effect: potionEffects) {
+			effect.apply(p);
+		}
+	}
+	
+	public void applyRandomPotionEffects(Player p) {
+		List<PotionEffect> toApply = new ArrayList<PotionEffect>();
 		
 		Set<PotionEffect> keys = randomPotionEffects.keySet();
 		int chance;
@@ -184,6 +239,7 @@ public class UsableItem {
 			p.playSound(p.getLocation(), useSound, 2.0f, 0.5f);			
 		}
 	}
+	
 	
 	@Override
 	public boolean equals(Object ob) {

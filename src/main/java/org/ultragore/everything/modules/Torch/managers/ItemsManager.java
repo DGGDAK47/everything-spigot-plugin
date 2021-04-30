@@ -71,6 +71,7 @@ public class ItemsManager implements Listener {
 		return null;
 	}
 	
+	
 	/**
 	 * Tries to give item to player with specific label
 	 * @param player
@@ -116,35 +117,21 @@ public class ItemsManager implements Listener {
 		
 		return 1;
 	}
-	public static boolean hasEmptySlots(PlayerInventory inv, int amount) {
-		int count = 0;
-		
-		ItemStack[] items = inv.getContents();
-		for(int i = 0; i < 36; i++) {
-			if(items[i] == null) {
-				if(count == amount) {
-					return true;
-				}
-				count++;
-			}
-		}
-		
-		return false;
-	}
-	
-	
 	
 	@EventHandler
 	public void onPlayerItemConsume(PlayerItemConsumeEvent e) {
-		PlayerInventory inventory = e.getPlayer().getInventory();
-		UsableItem uItem = getItemByItemStack(inventory.getItemInMainHand());
+		
 		if(Material.MILK_BUCKET.equals(e.getItem().getType())) {
 			onConsumeMilk(e);
 			return;
-		} else if(uItem == null) {
+		}
+		
+		UsableItem uItem = getItemByItemStack(e.getPlayer().getInventory().getItemInMainHand());
+		if(uItem == null) {
 			return;
 		} else if(!e.getPlayer().hasPermission(ITEMS_USE_PERM)) {
 			e.getPlayer().sendMessage(messages.getString("permission_denied"));
+			e.setCancelled(true);
 			return;
 		}
 		
@@ -157,6 +144,7 @@ public class ItemsManager implements Listener {
 				Integer secLeft = (int) (c.duration - ((currentTimestamp - c.createTimestamp) / 1000));
 				
 				p.sendMessage(messages.getString("cooldown").replaceAll("\\{left\\}", secLeft.toString()));
+				e.setCancelled(true);
 				return;
 			} else {
 				cooldownManager.createCooldown(p.getName(), uItem.getCooldown(), uItem.getLabel());
@@ -169,9 +157,16 @@ public class ItemsManager implements Listener {
 		}
 		p.sendMessage(useMessage);
 		
-		uItem.applyPotionEffects(p);
+		
+		if(Material.POTION == uItem.getMaterial()) {
+			uItem.applyRandomPotionEffects(p);
+		} else {
+			uItem.applyPotionEffects(p);
+			uItem.applyRandomPotionEffects(p);
+		}
 		uItem.spawnParticles(p.getLocation());
 		uItem.playUseSound(p);
+		uItem.addFoodLevel(p);
 	}
 	private void onConsumeMilk(PlayerItemConsumeEvent e) {
 		List<Cooldown> playerCooldowns = cooldownManager.getCooldowns(e.getPlayer().getName());
@@ -191,16 +186,15 @@ public class ItemsManager implements Listener {
 			return;
 		}
 		
-		PlayerInventory inventory = e.getPlayer().getInventory();
-		UsableItem uItem = getItemByItemStack(inventory.getItemInMainHand());
-		if(uItem == null) {
+		UsableItem uItem = getItemByItemStack(e.getPlayer().getInventory().getItemInMainHand());
+		if(uItem == null || uItem.getMaterial().isEdible() || Material.POTION == uItem.getMaterial()) {
 			return;
 		} else if(!e.getPlayer().hasPermission(ITEMS_USE_PERM)) {
 			e.getPlayer().sendMessage(messages.getString("permission_denied"));
-			return;
-		} else if(uItem.getMaterial().isEdible()) {
+			e.setCancelled(true);
 			return;
 		}
+		
 		
 		e.setCancelled(true);
 		
@@ -218,6 +212,8 @@ public class ItemsManager implements Listener {
 			}
 		}
 		
+		
+		PlayerInventory inventory = p.getInventory();
 		ItemStack itemInHand = inventory.getItemInMainHand();
 		if(itemInHand.getAmount() == 1) {
 			class RemoveItemTask implements Runnable {
@@ -249,9 +245,11 @@ public class ItemsManager implements Listener {
 		}
 		p.sendMessage(useMessage);
 		
-		uItem.applyPotionEffects(e.getPlayer());
-		uItem.spawnParticles(e.getPlayer().getLocation());
+		uItem.applyPotionEffects(p);
+		uItem.applyRandomPotionEffects(p);
+		uItem.spawnParticles(p.getLocation());
 		uItem.playUseSound(p);
+		uItem.addFoodLevel(p);
 	}
 	
 	@EventHandler
