@@ -85,10 +85,6 @@ public class NativeIcon {
 			toReturn.put("AMOUNT", amount);
 		}
 		
-		if(actions != null) {
-			toReturn.put("ACTIONS", actions);
-		}
-		
 		if(keepOpen != null) {
 			toReturn.put("KEEP-OPEN", keepOpen);
 		}
@@ -124,6 +120,16 @@ public class NativeIcon {
 		
 		if(material != null) {
 			toReturn.put("MATERIAL", material);
+		}
+		
+		if(actions != null) {
+			List<String> newActions = new ArrayList();
+			for(String action: actions) {
+				action = action.replaceAll("\\{MATERIAL\\}", material);
+				action = action.replaceAll("\\{AMOUNT\\}", amount.toString());
+				newActions.add(action);
+			}
+			toReturn.put("ACTIONS", newActions);
 		}
 		
 		if(nbtData != null) {
