@@ -38,7 +38,7 @@ public class UsableItem {
 	private ArrayList<PotionEffect> potionEffects = null;
 	private Map<PotionEffect, Integer> randomPotionEffects = null;
 	private Integer foodLevelUp = null;
-	private Color potionColor;
+	private Color potionColor = null;
 	private boolean addPotionEffects = true;
 	
 	
@@ -120,8 +120,6 @@ public class UsableItem {
 			// potionColor -> "R G B"
 			String[] rgb = potionColor.split(" ");
 			this.potionColor = Color.fromRGB(Integer.parseInt(rgb[0]), Integer.parseInt(rgb[1]), Integer.parseInt(rgb[2]));
-		} else {
-			this.potionColor = Color.PURPLE;
 		}
 		
 		ob = map.getBoolean("add_potion_effects");
@@ -184,11 +182,15 @@ public class UsableItem {
 			
 			if(potionEffects != null && addPotionEffects) {
 				for(PotionEffect pe: potionEffects) {
-					pmeta.addCustomEffect(pe, true);					
+					pmeta.addCustomEffect(pe, true);
 				}
 			}
 			
-			pmeta.setColor(potionColor);
+			if(potionColor != null) {
+				pmeta.setColor(potionColor);				
+			} else {
+				pmeta.setColor(Color.PURPLE);
+			}
 		}
 		
 		item.setItemMeta(meta);
