@@ -158,7 +158,7 @@ public class ItemsManager implements Listener {
 		p.sendMessage(useMessage);
 		
 		
-		if(Material.POTION == uItem.getMaterial()) {
+		if(Material.POTION == uItem.getMaterial() && uItem.addPotionEffects()) {
 			uItem.applyRandomPotionEffects(p);
 		} else {
 			uItem.applyPotionEffects(p);

@@ -39,6 +39,7 @@ public class UsableItem {
 	private Map<PotionEffect, Integer> randomPotionEffects = null;
 	private Integer foodLevelUp = null;
 	private Color potionColor;
+	private boolean addPotionEffects = true;
 	
 	
 	public UsableItem(String label, DottedMap map) {
@@ -122,6 +123,11 @@ public class UsableItem {
 		} else {
 			this.potionColor = Color.PURPLE;
 		}
+		
+		ob = map.getBoolean("add_potion_effects");
+		if(ob != null) {
+			addPotionEffects = (boolean) ob;
+		}
 	}
 	
 
@@ -157,6 +163,9 @@ public class UsableItem {
 		return milkCancel;
 	}
 
+	public boolean addPotionEffects() {
+		return this.addPotionEffects;
+	}
 	
 	
 	public ItemStack formItemStack(int amount) {
@@ -173,7 +182,7 @@ public class UsableItem {
 		if(Material.POTION == material) {
 			PotionMeta pmeta = (PotionMeta) meta;
 			
-			if(potionEffects != null) {
+			if(potionEffects != null && addPotionEffects) {
 				for(PotionEffect pe: potionEffects) {
 					pmeta.addCustomEffect(pe, true);					
 				}
