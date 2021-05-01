@@ -165,6 +165,7 @@ public class UsableItem {
 		
 		meta.setDisplayName(name);
 		meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+		meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
 		if(lore != null) {
 			meta.setLore(lore);
 		}
@@ -202,19 +203,27 @@ public class UsableItem {
 	}
 	
 	public void spawnParticles(Location loc) {
-		World world = loc.getWorld();
-		for(ParticleData data: useParticles) {
-			world.spawnParticle(data.particle, loc, data.count, data.offsetX, data.offsetY, data.offsetZ);
+		if(useParticles != null) {
+			World world = loc.getWorld();
+			for(ParticleData data: useParticles) {
+				world.spawnParticle(data.particle, loc, data.count, data.offsetX, data.offsetY, data.offsetZ);
+			}
 		}
 	}
 	
 	public void applyPotionEffects(Player p) {
-		for(PotionEffect effect: potionEffects) {
-			effect.apply(p);
+		if(potionEffects != null) {
+			for(PotionEffect effect: potionEffects) {
+				effect.apply(p);
+			}
 		}
 	}
 	
 	public void applyRandomPotionEffects(Player p) {
+		if(randomPotionEffects == null) {
+			return;
+		}
+		
 		List<PotionEffect> toApply = new ArrayList<PotionEffect>();
 		
 		Set<PotionEffect> keys = randomPotionEffects.keySet();
