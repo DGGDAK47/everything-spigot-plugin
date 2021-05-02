@@ -10,3 +10,6 @@ excluded_commands:
 #
 # cancel_message and issue_instead_command are not required.
 # cancel_message can be set to NONE
+#
+# if cmd starts with '^' then user command will be checked, if it starts with
+# cmd value. Otherwise user command will be checked on equals.

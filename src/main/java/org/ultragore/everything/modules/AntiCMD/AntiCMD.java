@@ -122,23 +122,31 @@ public class AntiCMD extends Module implements Listener, CommandExecutor {
 		
 		String msg = event.getMessage();
 		for(ExcludedCommand ecommand: excludedCommands) {
-			if(ecommand.command.equals(msg)) {
-				event.setCancelled(true);
-				
-				if(ecommand.cancelMessage != null) {
-					if(!ecommand.cancelMessage.equals("NONE")) {
-						player.sendMessage(ecommand.cancelMessage);						
-					}
-				} else {
-					player.sendMessage(defaultCnacelMessage);
+			if(ecommand.command.startsWith("^")) {
+				if(!msg.startsWith(ecommand.command.substring(1))) {
+					continue;					
 				}
-				
-				if(ecommand.issueInsteadCommand != null) {
-					player.performCommand(ecommand.issueInsteadCommand);
-				}
-				
-				break;
+			} else if(!msg.equals(ecommand.command)) {
+				continue;
 			}
+			
+			
+			
+			event.setCancelled(true);
+			
+			if(ecommand.cancelMessage != null) {
+				if(!ecommand.cancelMessage.equals("NONE")) {
+					player.sendMessage(ecommand.cancelMessage);						
+				}
+			} else {
+				player.sendMessage(defaultCnacelMessage);
+			}
+			
+			if(ecommand.issueInsteadCommand != null) {
+				player.performCommand(ecommand.issueInsteadCommand);
+			}
+			
+			break;
 		}
 		
 	}
