@@ -124,9 +124,11 @@ public class NativeIcon {
 		
 		if(actions != null) {
 			List<String> newActions = new ArrayList();
+			Integer amount = this.amount != null ? this.amount : 1;
 			for(String action: actions) {
 				action = action.replaceAll("\\{MATERIAL\\}", material);
 				action = action.replaceAll("\\{AMOUNT\\}", amount.toString());
+				
 				newActions.add(action);
 			}
 			toReturn.put("ACTIONS", newActions);
