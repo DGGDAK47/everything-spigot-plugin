@@ -17,6 +17,8 @@ public class WECommand {
 	
 	
 	public WECommand(String message, List<String> parameterKeys) throws InvalidWECommandSyntaxException {
+		// //cmd [-options] [arg1] [arg2] [...argN] [-m <parameter>]
+		
 		String[] sMessage = message.split(" ");
 		
 		if(parameterKeys == null) {
