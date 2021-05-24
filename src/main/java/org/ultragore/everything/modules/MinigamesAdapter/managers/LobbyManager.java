@@ -104,6 +104,7 @@ public class LobbyManager implements Listener {
 	public void onPlayerQuit(PlayerQuitEvent e) {
 		Lobby lobby = getLobby(e.getPlayer());
 		if(lobby != null) {
+			lobby.removeParticipant(e.getPlayer());
 			e.getPlayer().teleport(serverSpawnLocation);
 			Bukkit.getPluginManager().callEvent(new LobbyLeaveEvent(e.getPlayer(), lobby, false));
 		}
@@ -115,8 +116,8 @@ public class LobbyManager implements Listener {
 			return;
 		}
 		
-		Lobby fromLobby = getLobby(e.getFrom().getWorld().getName());
-		Lobby toLobby = getLobby(e.getTo().getWorld().getName());
+		Lobby fromLobby = getLobby(e.getPlayer());
+		Lobby toLobby = getLobby(e.getPlayer());
 		
 		if(fromLobby != null && toLobby != null &&
 		   fromLobby.worldName.equals(toLobby.worldName)) {
