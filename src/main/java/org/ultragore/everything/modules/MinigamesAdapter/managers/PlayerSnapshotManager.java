@@ -69,15 +69,17 @@ public class PlayerSnapshotManager implements Listener {
 	
 	@EventHandler
 	public void onMinigameLeave(MinigameLeaveEvent e) {
-		if(!e.teleportToLobby()) {
+		if(e.teleportToLobby()) {
+			Lobby lobby = lobbyManager.getLobby(e.getMinigame().lobbyWorld);
+			if(lobby != null) {
+				PermsUtils.setPlayerGroups(e.getPlayer(), Arrays.asList(lobby.lobbyGroup));				
+			}
+		} else {
 			PlayerSnapshot snapshot = getSnapshot(e.getPlayer());
 			if(snapshot != null) {
 				snapshot.applySnapshot();
 				snapshots.remove(snapshot);
 			}
-		} else {
-			Lobby lobby = lobbyManager.getLobby(e.getPlayer());
-			PermsUtils.setPlayerGroups(e.getPlayer(), Arrays.asList(lobby.lobbyGroup));
 		}
 	}
 }

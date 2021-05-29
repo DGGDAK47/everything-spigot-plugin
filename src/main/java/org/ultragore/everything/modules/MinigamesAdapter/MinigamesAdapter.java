@@ -33,7 +33,7 @@ public class MinigamesAdapter extends Module {
 		DottedMap config = implementConfig("org/ultragore/everything/modules/MinigamesLobby/config.yml", "minigames_lobby.yml", false);
 		
 		printLog("Creating managers..");
-		minigamesManager = new MinigamesManager(config.getMap("minigames"));
+		minigamesManager = new MinigamesManager(plugin, config.getMap("minigames"));
 		lobbyManager = new LobbyManager(minigamesManager, Sound.valueOf(config.getString("lobby_join_sound")), config.getMap("lobbies"), config.getString("server_spawn_location"));
 		environmentRestrictionsManager = new EnvironmentRestrictionsManager(plugin, lobbyManager);
 		playerSnapshotManager = new PlayerSnapshotManager(lobbyManager);
@@ -100,7 +100,7 @@ public class MinigamesAdapter extends Module {
 		playerSnapshotManager.applySnapshots();
 		
 		printLog("Creating new managers..");
-		minigamesManager = new MinigamesManager(config.getMap("minigames"));
+		minigamesManager = new MinigamesManager(plugin, config.getMap("minigames"));
 		lobbyManager = new LobbyManager(minigamesManager, Sound.valueOf(config.getString("lobby_join_sound")), config.getMap("lobbies"), config.getString("server_spawn_location"));
 		environmentRestrictionsManager = new EnvironmentRestrictionsManager(plugin, lobbyManager);
 		playerSnapshotManager = new PlayerSnapshotManager(lobbyManager);

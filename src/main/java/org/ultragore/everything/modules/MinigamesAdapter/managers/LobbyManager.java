@@ -116,8 +116,8 @@ public class LobbyManager implements Listener {
 			return;
 		}
 		
-		Lobby fromLobby = getLobby(e.getPlayer());
-		Lobby toLobby = getLobby(e.getPlayer());
+		Lobby fromLobby = getLobby(e.getFrom().getWorld().getName());
+		Lobby toLobby = getLobby(e.getTo().getWorld().getName());
 		
 		if(fromLobby != null && toLobby != null &&
 		   fromLobby.worldName.equals(toLobby.worldName)) {

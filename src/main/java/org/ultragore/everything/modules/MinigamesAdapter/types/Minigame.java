@@ -11,14 +11,18 @@ import org.bukkit.entity.Player;
 import org.ultragore.everything.utils.WorldUtils;
 
 public class Minigame {
-	public String gameGroup;
+	public String lobbyWorld;
 	public String worldName;
-	public Location deathRespawnLocation;
+	public String arenaId;
+	public String gameGroup;
+	public Location deathRespawnLocation = null;
 	private List<Player> participants = new ArrayList<Player>();
 	
 	public Minigame(Map<String, Object> map) {
-		gameGroup = (String) map.get("game_group");
+		lobbyWorld = (String) map.get("lobby_world");
 		worldName = (String) map.get("world_name");
+		arenaId = (String) map.get("arena_id");
+		gameGroup = (String) map.get("game_group");
 		deathRespawnLocation = WorldUtils.parseLocation((String) map.get("death_respawn_location"));
 	}
 	
@@ -36,5 +40,11 @@ public class Minigame {
 	
 	public void removeParticipant(Player participant) {
 		participants.remove(participant);
+	}
+	
+	public List<Player> clearParticipants() {
+		List<Player> oldParticipants = this.participants;
+		this.participants = new ArrayList<Player>();
+		return oldParticipants;
 	}
 }

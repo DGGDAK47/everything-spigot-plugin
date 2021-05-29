@@ -8,6 +8,7 @@ public enum Modules {
 	WE_EXTENDER ("WEExtender", "wee", org.ultragore.everything.modules.WorldEditExtender.WorldEditExtender.class),
 	TORCH ("Torch", "torch", org.ultragore.everything.modules.Torch.Torch.class),
 	MINIGAMES_ADAPTER ("MinigamesAdapter", "mlobby", org.ultragore.everything.modules.MinigamesAdapter.MinigamesAdapter.class);
+//	TAB_LIST ("TabList", null, org.ultragore.everything.modules.TabList.TabList.class);
 	
 	private String moduleName;
 	private String moduleCommand;

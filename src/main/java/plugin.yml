@@ -1,7 +1,7 @@
 name: Everything
 main: org.ultragore.everything.Everything
 version: 0.1
-depend: [WorldGuard, WorldEdit, ChestCommands, AuthMe, Vault, LuckPerms, Multiverse-Core]
+depend: [WorldGuard, WorldEdit, ChestCommands, AuthMe, Vault, LuckPerms, Multiverse-Core, ProtocolLib, MurderMystery]
 api-version: 1.16
 commands:
    opregions:

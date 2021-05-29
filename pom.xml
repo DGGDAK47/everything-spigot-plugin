@@ -38,9 +38,29 @@
         <id>luckperms.net</id>
         <url>https://central.sonatype.org</url>
     </repository>
+    <repository>
+    	<id>dmulloy2-repo</id>
+    	<url>https://repo.dmulloy2.net/repository/public/</url>
+    </repository>
+    <repository>
+        <id>plugilyprojects</id>
+        <url>https://maven.plugily.xyz</url>
+    </repository>
   </repositories>
 
   <dependencies>
+  	<dependency>
+    	<groupId>plugily.projects</groupId>
+        <artifactId>murdermystery</artifactId>
+        <version>1.7.8</version>
+        <scope>provided</scope>
+    </dependency>
+  	<dependency>
+    	<groupId>com.comphenix.protocol</groupId>
+    	<artifactId>ProtocolLib</artifactId>
+    	<version>4.6.0</version>
+    	<scope>provided</scope>
+  	</dependency>
   	<dependency>
         <groupId>net.luckperms</groupId>
         <artifactId>api</artifactId>

@@ -55,8 +55,10 @@ lobbies:
             
 minigames:
    murder_mansion:
-      game_group: 'minigame-murder-mansion'
+      lobby_world: 'world_lobby'
       world_name: 'world_murder_mansion'
+      arena_id: 'murder_mansion'
+      game_group: 'minigame-murder-mansion'
       death_respawn_location: 'world_murder_mansion -493.5 17.5 189.5 -180 0'
       
       
